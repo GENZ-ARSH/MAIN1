@@ -124,6 +124,46 @@
 </head>
 <body class="bg-gradient-to-br from-black via-gray-900 to-purple-950 min-h-screen text-white select-none">
 
+  <body class="bg-gradient-to-br from-black via-gray-900 to-purple-950 min-h-screen text-white select-none">
+
+    <!-- Welcome Overlay -->
+    <div id="welcome-overlay" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-90 transition-opacity duration-700">
+      <span class="glitch text-5xl md:text-7xl" data-text="WELCOME TO GENZ">WELCOME TO GENZ</span>
+    </div>
+  
+    <!-- Your main content starts here -->
+    <!-- ...rest of your page... -->
+  
+    <script>
+      // Fade out the welcome overlay after 2.2 seconds
+      window.addEventListener('DOMContentLoaded', () => {
+        setTimeout(() => {
+          const overlay = document.getElementById('welcome-overlay');
+          overlay.style.opacity = '0';
+          overlay.style.pointerEvents = 'none';
+          setTimeout(() => overlay.style.display = 'none', 700);
+        }, 2200);
+      });
+    </script>
+  </body>
+  
+  <!-- Your main content starts here -->
+  <!-- ...rest of your page... -->
+
+  <script>
+    // Fade out the welcome overlay after 2.2 seconds
+    window.addEventListener('DOMContentLoaded', () => {
+      setTimeout(() => {
+        const overlay = document.getElementById('welcome-overlay');
+        overlay.style.opacity = '0';
+        overlay.style.pointerEvents = 'none';
+        setTimeout(() => overlay.style.display = 'none', 700);
+      }, 2200);
+    });
+  </script>
+</>
+ class="bg-gradient-to-br from-black via-gray-900 to-purple-950 min-h-screen text-white select-none">
+
 <!-- Navigation -->
 <nav class="glass fixed top-4 left-1/2 transform -translate-x-1/2 px-8 py-3 flex gap-8 items-center z-50 shadow-lg text-lg font-bold">
   <a href="#" class="hover:text-cyan-400">Home</a>
@@ -139,28 +179,214 @@
   <p class="mt-4 text-2xl md:text-3xl font-mono max-w-3xl text-cyan-300">
     AI-powered. Hyper-immersive. Limitless Knowledge.
   </p>
-  <button id="explore-btn" class="mt-10 px-12 py-5 rounded-full bg-gradient-to-r from-pink-500 via-cyan-400 to-purple-600 text-black font-extrabold text-3xl shadow-xl ripple hover:scale-105 transition-transform duration-300">
+  <a href="#select-class" id="explore-btn" class="mt-10 px-12 py-5 rounded-full bg-gradient-to-r from-pink-500 via-cyan-400 to-purple-600 text-black font-extrabold text-3xl shadow-xl hover:scale-105 transition-transform duration-300 block text-center w-max mx-auto cursor-pointer select-none">
     🚀 Explore The Vault
-  </button>
-  <div class="mt-6 flex gap-6 text-cyan-400 font-bold">
-    <span class="badge">AI Chat</span>
-    <span class="badge">Voice Search</span>
-    <span class="badge">3D Books</span>
-    <span class="badge">Gamification</span>
+  </a>
+  
+  <div class="mt-6 flex flex-wrap gap-4 text-cyan-400 font-bold max-w-xl mx-auto justify-center">
+    <a href="ai-chat.html" class="badge" title="AI Chat">AI Chat</a>
+    <a href="voice-search.html" class="badge" title="Voice Search">Voice Search</a>
+    <a href="flashcard.html" class="badge" title="3D Books">3D Books</a>
+    <a href="gamification.html" class="badge" title="Gamification">Gamification</a>
+    <a href="sumriser.html" class="badge" title="Personalized Learning">Notes Summriser</a>
+    <a href="org.html" class="badge" title="Offline Mode">Organiser</a>
+    <a href="pomodoro.html" class="badge" title="Cloud Sync">FOCUS</a>
+    <a href="multi-language.html" class="badge" title="Multi-language Support">Multi-language Support</a>
+    <a href="ns.html" class="badge" title="Dark Mode">Make Notes</a>
+    <a href="games.html" class="badge" title="Games">Games</a>
+    <span id="contact-badge" class="badge cursor-pointer bg-gradient-to-r from-pink-500 via-purple-600 to-indigo-700 text-white shadow-lg" title="Contact @just_arsh1 on Telegram">
+      Contact @just_arsh1
+    </span>
   </div>
+  
+  
+  <style>
+    .badge {
+      background: linear-gradient(45deg, #0ff, #f0f);
+      padding: 0.3em 0.8em;
+      border-radius: 9999px;
+      font-weight: 700;
+      color: black;
+      box-shadow: 0 0 8px #0ff;
+      user-select: none;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .badge:hover {
+      transform: scale(1.1);
+      box-shadow: 0 0 15px #0ff;
+    }
+    #contact-badge:hover {
+      box-shadow: 0 0 20px #ff0080, 0 0 30px #7928ca;
+    }
+  </style>
+  
+  <script>
+    document.getElementById('contact-badge').addEventListener('click', () => {
+      // Opens Telegram chat with @just_arsh1 in a new tab
+      window.open('https://t.me/just_arsh1', '_blank', 'noopener,noreferrer');
+    });
+  </script>
+  
 </section>
 
 <!-- Class Selector -->
-<section id="class-selector" class="py-16 px-4 max-w-7xl mx-auto">
-  <h2 class="text-4xl font-bold text-cyan-400 mb-10 text-center">Select Your Class</h2>
-  <div class="flex flex-wrap justify-center gap-8">
-    <div class="card-3d glass p-8 w-52 h-52 flex items-center justify-center text-4xl font-bold cursor-pointer" data-class="9th">9th</div>
-    <div class="card-3d glass p-8 w-52 h-52 flex items-center justify-center text-4xl font-bold cursor-pointer" data-class="10th">10th</div>
-    <div class="card-3d glass p-8 w-52 h-52 flex items-center justify-center text-4xl font-bold cursor-pointer" data-class="11th">11th</div>
-    <div class="card-3d glass p-8 w-52 h-52 flex items-center justify-center text-4xl font-bold cursor-pointer" data-class="12th">12th</div>
-    <div class="card-3d glass p-8 w-52 h-52 flex items-center justify-center text-4xl font-bold cursor-pointer" data-class="NDA">NDA</div>
+<section class="py-16 bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900">
+  <h2 class="text-4xl font-bold text-cyan-400 mb-10 text-center select-none">Select Your Class</h2>
+  <div id="classCards" class="flex flex-wrap justify-center gap-8 max-w-5xl mx-auto">
+    <div tabindex="0" class="tooltip card-3d glass p-8 w-52 h-52 flex items-center justify-center text-4xl font-bold cursor-pointer transition-transform duration-300 hover:scale-105 hover:rotate-2 shadow-xl" data-class="9th" aria-label="9th class">
+      9th
+      <span class="tooltip-text">Class 9 - Foundation level</span>
+    </div>
+    <div tabindex="0" class="tooltip card-3d glass p-8 w-52 h-52 flex items-center justify-center text-4xl font-bold cursor-pointer transition-transform duration-300 hover:scale-105 hover:-rotate-2 shadow-xl" data-class="10th" aria-label="10th class">
+      10th
+      <span class="tooltip-text">Class 10 - Secondary education</span>
+
+  
+    </div>
+    <div tabindex="0" class="tooltip card-3d glass p-8 w-52 h-52 flex items-center justify-center text-4xl font-bold cursor-pointer transition-transform duration-300 hover:scale-105 hover:rotate-3 shadow-xl" data-class="11th" aria-label="11th class">
+      11th
+      <span class="tooltip-text">Class 11 - Senior secondary</span>
+    </div>
+    <div tabindex="0" class="tooltip card-3d glass p-8 w-52 h-52 flex items-center justify-center text-4xl font-bold cursor-pointer transition-transform duration-300 hover:scale-105 hover:-rotate-3 shadow-xl" data-class="12th" aria-label="12th class">
+      12th
+      <span class="tooltip-text">Class 12 - Senior secondary</span>
+    </div>
+    <div tabindex="0" class="tooltip card-3d glass p-8 w-52 h-52 flex items-center justify-center text-4xl font-bold cursor-pointer transition-transform duration-300 hover:scale-105 hover:rotate-1 shadow-xl" data-class="NDA" aria-label="NDA class">
+      NDA
+      <span class="tooltip-text">National Defence Academy</span>
+    </div>
+    <div tabindex="0" class="tooltip card-3d glass p-8 w-52 h-52 flex flex-col items-center justify-center text-2xl font-bold cursor-pointer transition-transform duration-300 hover:scale-105 hover:-rotate-1 shadow-xl" data-class="CUET" aria-label="CUET class">
+      <span>CUET</span>
+      <span class="text-base font-normal mt-2 text-cyan-300 select-none">UG Entrance</span>
+      <span class="tooltip-text">Central University Entrance Test</span>
+    </div>
+    <div tabindex="0" class="tooltip card-3d glass p-8 w-52 h-52 flex flex-col items-center justify-center text-2xl font-bold cursor-pointer transition-transform duration-300 hover:scale-105 hover:rotate-6 shadow-xl" data-class="JEE" aria-label="JEE class">
+      <span>JEE</span>
+      <span class="text-base font-normal mt-2 text-cyan-300 select-none">Engineering</span>
+      <span class="tooltip-text">Joint Entrance Examination</span>
+    </div>
+    <div tabindex="0" class="tooltip card-3d glass p-8 w-52 h-52 flex flex-col items-center justify-center text-2xl font-bold cursor-pointer transition-transform duration-300 hover:scale-105 hover:-rotate-6 shadow-xl" data-class="NEET" aria-label="NEET class">
+      <span>NEET</span>
+      <span class="text-base font-normal mt-2 text-cyan-300 select-none">Medical</span>
+      <span class="tooltip-text">National Eligibility cum Entrance Test</span>
+    </div>
+    <div tabindex="0" class="tooltip card-3d glass p-8 w-52 h-52 flex flex-col items-center justify-center text-2xl font-bold cursor-pointer transition-transform duration-300 hover:scale-105 hover:rotate-12 shadow-xl" data-class="OLYMPIADS" aria-label="Olympiads class">
+      <span>OLYMPIADS</span>
+      <span class="text-base font-normal mt-2 text-cyan-300 select-none">Competitive</span>
+      <span class="tooltip-text">Science & Math Olympiads</span>
+    </div>
   </div>
+
+  <p id="selectedClass" class="mt-12 text-center text-3xl font-semibold text-cyan-300 select-none" aria-live="polite"></p>
 </section>
+
+<style>
+  /* Glassmorphism */
+  .glass {
+    background: rgba(30, 41, 59, 0.55);
+    border-radius: 1.5rem;
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.25);
+    backdrop-filter: blur(9px) saturate(180%);
+    -webkit-backdrop-filter: blur(9px) saturate(180%);
+    border: 1.5px solid rgba(255, 255, 255, 0.18);
+    transition: box-shadow 0.3s, border 0.3s;
+  }
+  /* 3D container */
+  .card-3d {
+    perspective: 700px;
+    will-change: transform;
+    opacity: 0;
+    transform: translateY(20px) scale(0.95);
+    animation: fadeInUp 0.6s forwards;
+  }
+  .card-3d:nth-child(1) { animation-delay: 0.1s; }
+  .card-3d:nth-child(2) { animation-delay: 0.2s; }
+  .card-3d:nth-child(3) { animation-delay: 0.3s; }
+  .card-3d:nth-child(4) { animation-delay: 0.4s; }
+  .card-3d:nth-child(5) { animation-delay: 0.5s; }
+  .card-3d:nth-child(6) { animation-delay: 0.6s; }
+  .card-3d:nth-child(7) { animation-delay: 0.7s; }
+  .card-3d:nth-child(8) { animation-delay: 0.8s; }
+  .card-3d:nth-child(9) { animation-delay: 0.9s; }
+
+  @keyframes fadeInUp {
+    to {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+  }
+
+  /* Hover effect */
+  .card-3d:hover {
+    box-shadow: 0 16px 40px 0 rgba(6, 182, 212, 0.25), 0 2px 8px 0 rgba(0,0,0,0.1);
+    border-color: #22d3ee;
+  }
+
+  /* Active selected card */
+  .card-3d.active {
+    border-color: #06b6d4;
+    box-shadow: 0 24px 48px 0 rgba(6, 182, 212, 0.6);
+    transform: scale(1.1) rotate(0deg) !important;
+    outline: none;
+  }
+
+  /* Tooltip */
+  .tooltip {
+    position: relative;
+  }
+  .tooltip:hover .tooltip-text,
+  .tooltip:focus .tooltip-text {
+    opacity: 1;
+    visibility: visible;
+  }
+  .tooltip-text {
+    position: absolute;
+    bottom: 110%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(6, 182, 212, 0.9);
+    color: white;
+    padding: 0.4rem 0.8rem;
+    border-radius: 0.5rem;
+    white-space: nowrap;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s;
+    font-size: 0.875rem;
+    pointer-events: none;
+    z-index: 10;
+  }
+</style>
+
+<script>
+  const cardsContainer = document.getElementById('classCards');
+  const selectedClassText = document.getElementById('selectedClass');
+  let activeCard = null;
+
+  // Click handler
+  cardsContainer.addEventListener('click', (e) => {
+    const card = e.target.closest('.card-3d');
+    if (!card) return;
+
+    if (activeCard) activeCard.classList.remove('active');
+    card.classList.add('active');
+    activeCard = card;
+
+    const selectedClass = card.getAttribute('data-class');
+    selectedClassText.textContent = `You selected: ${selectedClass}`;
+  });
+
+  // Keyboard accessibility
+  cardsContainer.querySelectorAll('.card-3d').forEach(card => {
+    card.addEventListener('keydown', e => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        card.click();
+      }
+    });
+  });
+</script>
+
 
 <!-- Books Section -->
 <section id="books-section" class="max-w-7xl mx-auto px-4 py-10 hidden">
@@ -455,6 +681,7 @@
     initAccessibility();
   });
 </script>
+<h1>MADE BY GENZ-ARSH</h1>
 
 </body>
 </html>
