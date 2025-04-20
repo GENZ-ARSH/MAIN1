@@ -1,230 +1,512 @@
 <!DOCTYPE html>
-<html lang="en" class="scroll-smooth" data-theme="dark">
+<html lang="en" >
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>GEN-Z-LIBRARY Admin Panel</title>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
-  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
+  <title>GEN-Z-LIBRARY Admin with Section Selection</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap" rel="stylesheet" />
+  <script src="https://unpkg.com/@supabase/supabase-js@2.39.7/dist/umd/supabase.min.js"></script>
+  <style>
+    body {
+      font-family: 'Orbitron', sans-serif;
+      background: linear-gradient(135deg, #0f172a 70%, #0ff0fc 100%);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+    .glass {
+      background: rgba(30,41,59,0.7);
+      box-shadow: 0 8px 32px 0 #0ff0fc33, 0 1.5px 5px 0 #0ff0fc44;
+      backdrop-filter: blur(16px);
+      border-radius: 1.5rem;
+      border: 1.5px solid rgba(0,255,255,0.25);
+    }
+    .neon-glow {
+      text-shadow: 0 0 12px #0ff0fc, 0 0 24px #0ff0fc88, 0 0 2px #fff;
+      color: #0ff0fc;
+    }
+    .btn-neon {
+      background: linear-gradient(90deg, #0ff0fc 0%, #00e6ff 100%);
+      color: #18181b;
+      box-shadow: 0 0 16px #0ff0fc99;
+      border-radius: 9999px;
+      font-weight: bold;
+      transition: transform 0.15s, box-shadow 0.15s;
+    }
+    .btn-neon:hover {
+      transform: scale(1.07) translateY(-2px);
+      box-shadow: 0 0 32px #0ff0fc, 0 0 8px #fff;
+    }
+    .glitch {
+      position: relative;
+      color: #fff;
+      font-weight: 800;
+      font-size: 2.2rem;
+      letter-spacing: 2px;
+    }
+    .glitch:before, .glitch:after {
+      content: attr(data-text);
+      position: absolute;
+      left: 0; width: 100%; overflow: hidden;
+      color: #0ff0fc99;
+      z-index: -1;
+    }
+    .glitch:before {
+      animation: glitchTop 2s infinite linear alternate-reverse;
+      top: -2px;
+      text-shadow: 2px 0 #0ff0fc;
+    }
+    .glitch:after {
+      animation: glitchBot 2s infinite linear alternate-reverse;
+      top: 2px;
+      text-shadow: -2px 0 #00e6ff;
+    }
+    @keyframes glitchTop {
+      0% { clip-path: inset(0 0 85% 0); }
+      20% { clip-path: inset(0 0 60% 0); }
+      40% { clip-path: inset(0 0 85% 0); }
+      60% { clip-path: inset(0 0 70% 0); }
+      80% { clip-path: inset(0 0 90% 0); }
+      100% { clip-path: inset(0 0 85% 0); }
+    }
+    @keyframes glitchBot {
+      0% { clip-path: inset(85% 0 0 0); }
+      20% { clip-path: inset(60% 0 0 0); }
+      40% { clip-path: inset(85% 0 0 0); }
+      60% { clip-path: inset(70% 0 0 0); }
+      80% { clip-path: inset(90% 0 0 0); }
+      100% { clip-path: inset(85% 0 0 0); }
+    }
+    .spinner {
+      border: 4px solid #0ff0fc44;
+      border-top: 4px solid #0ff0fc;
+      border-radius: 50%;
+      width: 32px;
+      height: 32px;
+      animation: spin 1s linear infinite;
+      margin: auto;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg);}
+      100% { transform: rotate(360deg);}
+    }
+    .toast {
+      position: fixed;
+      top: 1.5rem;
+      right: 1.5rem;
+      min-width: 220px;
+      z-index: 9999;
+      padding: 1rem 1.5rem;
+      border-radius: 1rem;
+      font-weight: bold;
+      font-size: 1rem;
+      color: #fff;
+      background: linear-gradient(90deg, #0ff0fc 0%, #00e6ff 100%);
+      box-shadow: 0 0 16px #0ff0fc99;
+      opacity: 0.95;
+      animation: fadeIn 0.4s;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-20px);}
+      to { opacity: 0.95; transform: translateY(0);}
+    }
+    select, input, button {
+      transition: all 0.2s ease;
+    }
+  </style>
 </head>
-<body class="bg-gray-900 text-white min-h-screen flex flex-col items-center">
-
-  <header class="mt-8 mb-4">
-    <h1 class="text-3xl font-bold text-cyan-400">GEN-Z-LIBRARY Admin Panel</h1>
+<body>
+  <header class="flex flex-col items-center py-6 mb-8">
+    <h1 class="glitch neon-glow" data-text="GEN-Z-LIBRARY ADMIN">GEN-Z-LIBRARY ADMIN</h1>
+    <p class="text-neon-blue text-lg mt-2 neon-glow">High-Tech Book & Content Management Dashboard</p>
   </header>
 
-  <!-- Login Section -->
-  <section id="login-section" class="w-full max-w-md bg-gray-800 p-6 rounded-lg shadow-lg flex flex-col gap-4">
-    <input id="admin-password" type="password" placeholder="Enter Admin Password" class="p-3 rounded bg-gray-700 text-white" autocomplete="off" />
-    <button id="login-btn" class="bg-pink-600 hover:bg-pink-700 p-3 rounded font-bold text-white">Login</button>
-    <p id="login-error" class="text-red-500 hidden">Incorrect password. Try again.</p>
-  </section>
+  <main class="max-w-6xl mx-auto px-4 flex flex-col gap-10">
 
-  <!-- Admin Dashboard -->
-  <section id="admin-dashboard" class="hidden w-full max-w-4xl bg-gray-800 p-6 rounded-lg shadow-lg mt-8 flex flex-col gap-6">
-
-    <div class="flex justify-between items-center">
-      <h2 class="text-2xl font-bold text-cyan-400">Manage Books</h2>
-      <button id="logout-btn" class="bg-pink-600 hover:bg-pink-700 px-4 py-2 rounded font-bold text-white">Logout</button>
-    </div>
-
-    <!-- Book Form -->
-    <form id="book-form" class="flex flex-col gap-4 bg-gray-700 p-4 rounded">
-      <input type="hidden" id="book-id" />
-      <input id="title" type="text" placeholder="Book Title" required class="p-2 rounded bg-gray-600 text-white" />
-      <input id="author" type="text" placeholder="Author" required class="p-2 rounded bg-gray-600 text-white" />
-      <input id="class" type="text" placeholder="Class (e.g., 9th, NDA)" required class="p-2 rounded bg-gray-600 text-white" />
-      <select id="format" required class="p-2 rounded bg-gray-600 text-white">
-        <option value="" disabled selected>Select Format</option>
-        <option value="PDF">PDF</option>
-        <option value="EPUB">EPUB</option>
-        <option value="MOBI">MOBI</option>
-        <option value="Video">Video</option>
-        <option value="Audio">Audio</option>
+    <!-- Section Selector -->
+    <div class="glass p-4 flex flex-wrap items-center gap-4 justify-center md:justify-start">
+      <span class="neon-glow font-semibold mr-2">Select Section:</span>
+      <select id="section-selector" class="bg-[#18181b88] border border-[#0ff0fc88] rounded-lg px-4 py-2 text-white w-48 focus:outline-none focus:ring-2 focus:ring-[#0ff0fc]">
+        <option value="books" selected>Books</option>
+        <option value="other">Other</option>
+        <!-- Add more sections here if needed -->
       </select>
-      <input id="size" type="text" placeholder="File Size (e.g., 2.4MB)" required class="p-2 rounded bg-gray-600 text-white" />
-      <label class="text-sm text-gray-300">Cover Image:</label>
-      <input id="cover" type="file" accept="image/*" class="text-white" />
-      <label class="text-sm text-gray-300">Book File:</label>
-      <input id="file" type="file" class="text-white" />
-      <div class="flex gap-4">
-        <button type="submit" class="bg-cyan-600 hover:bg-cyan-700 text-black font-bold p-2 rounded flex-grow">Save Book</button>
-        <button id="delete-btn" type="button" class="bg-red-600 hover:bg-red-700 text-black font-bold p-2 rounded flex-grow hidden">Delete Book</button>
-      </div>
-      <p id="form-msg" class="text-green-400 mt-2"></p>
-    </form>
-
-    <!-- Books List -->
-    <div>
-      <h3 class="text-xl mb-2 font-bold text-cyan-300">Books List</h3>
-      <ul id="books-list" class="max-h-96 overflow-auto space-y-2"></ul>
     </div>
 
-  </section>
+    <!-- Welcome Card -->
+    <div class="glass p-8 flex flex-col md:flex-row items-center justify-between gap-6">
+      <div>
+        <h2 class="text-3xl neon-glow font-bold mb-2">Welcome, Admin!</h2>
+        <p class="text-[#0ff0fcbb] text-lg">Manage your GEN-Z-LIBRARY content in real-time.</p>
+      </div>
+      <img src="https://img.icons8.com/fluency/96/000000/books.png" alt="Books" class="w-20 h-20 animate-pulse" />
+    </div>
 
-  <footer class="mt-8 text-gray-400">
-    <a href="index.html" class="hover:text-cyan-400">Home</a> |
-    <a href="team.html" class="hover:text-cyan-400">Team Page</a>
-  </footer>
+    <!-- Books Table Section -->
+    <section id="books-section" class="glass p-6">
+      <div class="flex items-center justify-between mb-4">
+        <h3 class="text-xl neon-glow font-semibold">Books Management</h3>
+        <button onclick="showBookForm()" class="btn-neon px-5 py-2 text-base shadow-lg flex items-center gap-2">
+          <span>+</span> Add Book
+        </button>
+      </div>
+      <div id="books-loading" class="w-full flex justify-center py-4 hidden">
+        <div class="spinner"></div>
+      </div>
+      <div class="overflow-x-auto">
+        <table class="min-w-full text-left text-white">
+          <thead>
+            <tr class="bg-[#0ff0fc22]">
+              <th class="px-4 py-2">Cover</th>
+              <th class="px-4 py-2">Title</th>
+              <th class="px-4 py-2">Author</th>
+              <th class="px-4 py-2">Class</th>
+              <th class="px-4 py-2">Tags</th>
+              <th class="px-4 py-2">Section</th>
+              <th class="px-4 py-2">Actions</th>
+            </tr>
+          </thead>
+          <tbody id="books-tbody"></tbody>
+        </table>
+      </div>
+    </section>
 
-<script>
-  // Supabase config
-  const SUPABASE_URL = 'https://aqbfkyggwivuzvvqedvi.supabase.co';
-  const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFxYmZreWdnd2l2dXp2dnFlZHZpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDUwNDMwMzgsImV4cCI6MjA2MDYxOTAzOH0.Nd4iCgjfbEKTOjlx5xNT7Dh-eFSYd8NPe20KNraBdM0';
-  const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    <!-- Other Section -->
+    <section id="other-section" class="glass p-6 hidden">
+      <div class="flex items-center justify-between mb-4">
+        <h3 class="text-xl neon-glow font-semibold">Other Content</h3>
+        <button onclick="showOtherForm()" class="btn-neon px-5 py-2 text-base shadow-lg flex items-center gap-2">
+          <span>+</span> Add Other
+        </button>
+      </div>
+      <div id="other-loading" class="w-full flex justify-center py-4 hidden">
+        <div class="spinner"></div>
+      </div>
+      <div class="overflow-x-auto">
+        <table class="min-w-full text-left text-white">
+          <thead>
+            <tr class="bg-[#0ff0fc22]">
+              <th class="px-4 py-2">Image</th>
+              <th class="px-4 py-2">Title</th>
+              <th class="px-4 py-2">Description</th>
+              <th class="px-4 py-2">URL</th>
+              <th class="px-4 py-2">Actions</th>
+            </tr>
+          </thead>
+          <tbody id="other-tbody"></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
 
-  // Elements
-  const loginSection = document.getElementById('login-section');
-  const adminDashboard = document.getElementById('admin-dashboard');
-  const loginBtn = document.getElementById('login-btn');
-  const loginError = document.getElementById('login-error');
-  const logoutBtn = document.getElementById('logout-btn');
-  const bookForm = document.getElementById('book-form');
-  const booksList = document.getElementById('books-list');
-  const formMsg = document.getElementById('form-msg');
-  const deleteBtn = document.getElementById('delete-btn');
+  <!-- Book Form Modal -->
+  <div id="book-modal" class="fixed inset-0 bg-[#18181baa] flex items-center justify-center z-50 hidden">
+    <div class="glass w-full max-w-lg p-8 relative">
+      <button onclick="closeBookForm()" class="absolute top-4 right-4 btn-neon px-3 py-1 text-sm">X</button>
+      <h3 id="book-form-title" class="text-2xl neon-glow mb-4">Add New Book</h3>
+      <form id="book-form" class="space-y-4">
+        <input type="hidden" id="book-id" />
+        <input type="text" id="book-title" placeholder="Title" required class="w-full px-4 py-2 rounded-lg bg-[#18181b88] border border-[#0ff0fc88] text-white" />
+        <input type="text" id="book-author" placeholder="Author" required class="w-full px-4 py-2 rounded-lg bg-[#18181b88] border border-[#0ff0fc88] text-white" />
+        <input type="text" id="book-class" placeholder="Class" required class="w-full px-4 py-2 rounded-lg bg-[#18181b88] border border-[#0ff0fc88] text-white" />
+        <input type="text" id="book-tags" placeholder="Tags (comma-separated)" class="w-full px-4 py-2 rounded-lg bg-[#18181b88] border border-[#0ff0fc88] text-white" />
+        <input type="url" id="book-coverurl" placeholder="Cover Image URL" class="w-full px-4 py-2 rounded-lg bg-[#18181b88] border border-[#0ff0fc88] text-white" />
+        <input type="url" id="book-fileurl" placeholder="Book File URL" class="w-full px-4 py-2 rounded-lg bg-[#18181b88] border border-[#0ff0fc88] text-white" />
+        <label class="block text-[#0ff0fc] font-semibold mt-2">Section</label>
+        <select id="book-section" required class="w-full px-4 py-2 rounded-lg bg-[#18181b88] border border-[#0ff0fc88] text-white focus:outline-none focus:ring-2 focus:ring-[#0ff0fc]">
+          <option value="books">Books</option>
+          <option value="other">Other</option>
+          <!-- Add more sections here if needed -->
+        </select>
+        <button type="submit" class="btn-neon w-full py-3 text-lg mt-2">Save Book</button>
+        <div id="book-form-loading" class="w-full flex justify-center py-4 hidden">
+          <div class="spinner"></div>
+        </div>
+      </form>
+    </div>
+  </div>
 
-  // Simple admin password (change as needed)
-  const ADMIN_PASSWORD = 'GENZCLANX';
+  <!-- Other Form Modal -->
+  <div id="other-modal" class="fixed inset-0 bg-[#18181baa] flex items-center justify-center z-50 hidden">
+    <div class="glass w-full max-w-lg p-8 relative">
+      <button onclick="closeOtherForm()" class="absolute top-4 right-4 btn-neon px-3 py-1 text-sm">X</button>
+      <h3 id="other-form-title" class="text-2xl neon-glow mb-4">Add New Content</h3>
+      <form id="other-form" class="space-y-4">
+        <input type="hidden" id="other-id" />
+        <input type="text" id="other-title" placeholder="Title" required class="w-full px-4 py-2 rounded-lg bg-[#18181b88] border border-[#0ff0fc88] text-white" />
+        <input type="text" id="other-description" placeholder="Description" required class="w-full px-4 py-2 rounded-lg bg-[#18181b88] border border-[#0ff0fc88] text-white" />
+        <input type="url" id="other-url" placeholder="URL" class="w-full px-4 py-2 rounded-lg bg-[#18181b88] border border-[#0ff0fc88] text-white" />
+        <input type="url" id="other-imageurl" placeholder="Image URL" class="w-full px-4 py-2 rounded-lg bg-[#18181b88] border border-[#0ff0fc88] text-white" />
+        <button type="submit" class="btn-neon w-full py-3 text-lg mt-2">Save Content</button>
+        <div id="other-form-loading" class="w-full flex justify-center py-4 hidden">
+          <div class="spinner"></div>
+        </div>
+      </form>
+    </div>
+  </div>
 
-  let editingBookId = null;
+  <!-- Toasts -->
+  <div id="toast-container"></div>
 
-  // Login handler
-  loginBtn.addEventListener('click', () => {
-    const pw = document.getElementById('admin-password').value.trim();
-    if (pw === ADMIN_PASSWORD) {
-      loginSection.classList.add('hidden');
-      adminDashboard.classList.remove('hidden');
-      loadBooks();
-    } else {
-      loginError.classList.remove('hidden');
+  <script>
+    // Supabase config
+    const SUPABASE_URL = 'https://aqbfkyggwivuzvvqedvi.supabase.co';
+    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFxYmZreWdnd2l2dXp2dnFlZHZpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDUwNDMwMzgsImV4cCI6MjA2MDYxOTAzOH0.Nd4iCgjfbEKTOjlx5xNT7Dh-eFSYd8NPe20KNraBdM0';
+    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    // Toast
+    function showToast(msg, isError = false) {
+      const toast = document.createElement('div');
+      toast.className = 'toast' + (isError ? ' bg-red-500' : '');
+      toast.innerText = msg;
+      document.getElementById('toast-container').appendChild(toast);
+      setTimeout(() => toast.remove(), 3000);
     }
-  });
 
-  // Logout handler
-  logoutBtn.addEventListener('click', () => {
-    adminDashboard.classList.add('hidden');
-    loginSection.classList.remove('hidden');
-    bookForm.reset();
-    formMsg.textContent = '';
-    deleteBtn.classList.add('hidden');
-    editingBookId = null;
-  });
+    // --- BOOKS CRUD ---
+    const booksTbody = document.getElementById('books-tbody');
+    const booksLoading = document.getElementById('books-loading');
+    let editingBookId = null;
 
-  // Upload file helper
-  async function uploadFile(bucket, file) {
-    const filePath = `${Date.now()}_${file.name}`;
-    const { error } = await supabase.storage.from(bucket).upload(filePath, file);
-    if (error) throw error;
-    const { publicURL } = supabase.storage.from(bucket).getPublicUrl(filePath).data;
-    return publicURL;
-  }
+    // Current selected section for books display
+    let currentBookSection = 'books';
 
-  // Load books
-  async function loadBooks() {
-    booksList.innerHTML = 'Loading...';
-    const { data, error } = await supabase.from('books').select('*').order('title');
-    if (error) {
-      booksList.innerHTML = 'Error loading books';
-      return;
-    }
-    booksList.innerHTML = '';
-    data.forEach(book => {
-      const li = document.createElement('li');
-      li.className = 'p-2 bg-gray-700 rounded cursor-pointer hover:bg-cyan-700';
-      li.textContent = `${book.title} by ${book.author} (${book.class})`;
-      li.addEventListener('click', () => populateForm(book));
-      booksList.appendChild(li);
-    });
-  }
-
-  // Populate form for editing
-  function populateForm(book) {
-    editingBookId = book.id;
-    bookForm.title.value = book.title;
-    bookForm.author.value = book.author;
-    bookForm.class.value = book.class;
-    bookForm.format.value = book.format;
-    bookForm.size.value = book.size;
-    formMsg.textContent = '';
-    deleteBtn.classList.remove('hidden');
-  }
-
-  // Clear form
-  function clearForm() {
-    editingBookId = null;
-    bookForm.reset();
-    formMsg.textContent = '';
-    deleteBtn.classList.add('hidden');
-  }
-
-  // Submit form handler (add or update)
-  bookForm.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    formMsg.textContent = 'Saving...';
-
-    try {
-      const title = bookForm.title.value.trim();
-      const author = bookForm.author.value.trim();
-      const bookClass = bookForm.class.value.trim();
-      const format = bookForm.format.value;
-      const size = bookForm.size.value.trim();
-
-      if (!title || !author || !bookClass || !format || !size) {
-        formMsg.textContent = 'Please fill all fields.';
+    async function loadBooks() {
+      booksLoading.classList.remove('hidden');
+      booksTbody.innerHTML = '';
+      let { data, error } = await supabase
+        .from('books')
+        .select('*')
+        .eq('section', currentBookSection)
+        .order('id', { ascending: false });
+      booksLoading.classList.add('hidden');
+      if (error) { showToast('Failed to load books', true); return; }
+      if (data.length === 0) {
+        booksTbody.innerHTML = `<tr><td colspan="7" class="text-center py-4 text-[#0ff0fcaa]">No books in this section.</td></tr>`;
         return;
       }
+      data.forEach(book => addBookRow(book));
+    }
 
-      // Upload files if selected
-      let coverURL = null;
-      let fileURL = null;
+    function addBookRow(book) {
+      const tr = document.createElement('tr');
+      tr.className = 'hover:bg-[#0ff0fc11] transition-all';
+      tr.innerHTML = `
+        <td class="px-2 py-2">
+          <img src="${book.coverurl || 'https://img.icons8.com/ios-filled/50/0ff0fc/open-book--v2.png'}" class="w-12 h-12 object-cover rounded shadow" />
+        </td>
+        <td class="px-2 py-2">${book.title}</td>
+        <td class="px-2 py-2">${book.author}</td>
+        <td class="px-2 py-2">${book.class}</td>
+        <td class="px-2 py-2">${book.tags || ''}</td>
+        <td class="px-2 py-2">${book.section}</td>
+        <td class="px-2 py-2 flex gap-2">
+          <button class="btn-neon px-3 py-1 text-xs" onclick='editBook(${JSON.stringify(book)})'>Edit</button>
+          <button class="btn-neon px-3 py-1 text-xs" onclick='deleteBook("${book.id}")'>Delete</button>
+        </td>
+      `;
+      booksTbody.appendChild(tr);
+    }
 
-      if (bookForm.cover.files.length > 0) {
-        coverURL = await uploadFile('covers', bookForm.cover.files[0]);
-      }
-      if (bookForm.file.files.length > 0) {
-        fileURL = await uploadFile('books', bookForm.file.files[0]);
-      }
-
-      // Build book object
-      const bookData = { title, author, class: bookClass, format, size };
-      if (coverURL) bookData.cover_url = coverURL;
-      if (fileURL) bookData.file_url = fileURL;
-
-      if (editingBookId) {
-        // Update book
-        const { error } = await supabase.from('books').update(bookData).eq('id', editingBookId);
-        if (error) throw error;
-        formMsg.textContent = 'Book updated successfully!';
+    // Book Form Modal
+    function showBookForm(book = null) {
+      document.getElementById('book-modal').classList.remove('hidden');
+      document.getElementById('book-form-loading').classList.add('hidden');
+      document.getElementById('book-form').reset();
+      editingBookId = null;
+      if (book) {
+        document.getElementById('book-form-title').innerText = 'Edit Book';
+        document.getElementById('book-id').value = book.id;
+        document.getElementById('book-title').value = book.title;
+        document.getElementById('book-author').value = book.author;
+        document.getElementById('book-class').value = book.class;
+        document.getElementById('book-tags').value = book.tags || '';
+        document.getElementById('book-coverurl').value = book.coverurl || '';
+        document.getElementById('book-fileurl').value = book.fileurl || '';
+        document.getElementById('book-section').value = book.section || 'books';
+        editingBookId = book.id;
       } else {
-        // Insert new book
-        const { error } = await supabase.from('books').insert([bookData]);
-        if (error) throw error;
-        formMsg.textContent = 'Book added successfully!';
+        document.getElementById('book-form-title').innerText = 'Add New Book';
+        // Default section to current selected section
+        document.getElementById('book-section').value = currentBookSection;
+      }
+    }
+    function closeBookForm() {
+      document.getElementById('book-modal').classList.add('hidden');
+    }
+    window.showBookForm = showBookForm;
+    window.closeBookForm = closeBookForm;
+
+    function editBook(book) { showBookForm(book); }
+    window.editBook = editBook;
+
+    document.getElementById('book-form').onsubmit = async (e) => {
+      e.preventDefault();
+      document.getElementById('book-form-loading').classList.remove('hidden');
+      const id = document.getElementById('book-id').value;
+      const title = document.getElementById('book-title').value;
+      const author = document.getElementById('book-author').value;
+      const bookClass = document.getElementById('book-class').value;
+      const tags = document.getElementById('book-tags').value;
+      const coverurl = document.getElementById('book-coverurl').value;
+      const fileurl = document.getElementById('book-fileurl').value;
+      const section = document.getElementById('book-section').value;
+      let payload = { title, author, class: bookClass, tags, coverurl, fileurl, section };
+      let result;
+      if (editingBookId) {
+        result = await supabase.from('books').update(payload).eq('id', editingBookId);
+      } else {
+        result = await supabase.from('books').insert([payload]);
+      }
+      document.getElementById('book-form-loading').classList.add('hidden');
+      if (result.error) {
+        showToast('Failed to save book', true);
+      } else {
+        showToast('Book saved successfully');
+        closeBookForm();
+        loadBooks();
+      }
+    };
+
+    async function deleteBook(id) {
+      if (!confirm('Delete this book?')) return;
+      let { error } = await supabase.from('books').delete().eq('id', id);
+      if (error) showToast('Delete failed', true);
+      else { showToast('Book deleted'); loadBooks(); }
+    }
+    window.deleteBook = deleteBook;
+
+    // --- OTHER SECTION CRUD (unchanged) ---
+    const otherTbody = document.getElementById('other-tbody');
+    const otherLoading = document.getElementById('other-loading');
+    let editingOtherId = null;
+
+    async function loadOther() {
+      otherLoading.classList.remove('hidden');
+      otherTbody.innerHTML = '';
+      let { data, error } = await supabase.from('other').select('*').order('id', { ascending: false });
+      otherLoading.classList.add('hidden');
+      if (error) { showToast('Failed to load content', true); return; }
+      data.forEach(other => addOtherRow(other));
+    }
+
+    function addOtherRow(other) {
+      const tr = document.createElement('tr');
+      tr.className = 'hover:bg-[#0ff0fc11] transition-all';
+      tr.innerHTML = `
+        <td class="px-2 py-2">
+          <img src="${other.imageurl || 'https://img.icons8.com/ios-filled/50/0ff0fc/open-book--v2.png'}" class="w-12 h-12 object-cover rounded shadow" />
+        </td>
+        <td class="px-2 py-2">${other.title}</td>
+        <td class="px-2 py-2">${other.description}</td>
+        <td class="px-2 py-2"><a href="${other.url}" target="_blank" class="underline text-[#0ff0fc]">${other.url ? 'Open' : ''}</a></td>
+        <td class="px-2 py-2 flex gap-2">
+          <button class="btn-neon px-3 py-1 text-xs" onclick='editOther(${JSON.stringify(other)})'>Edit</button>
+          <button class="btn-neon px-3 py-1 text-xs" onclick='deleteOther("${other.id}")'>Delete</button>
+        </td>
+      `;
+      otherTbody.appendChild(tr);
+    }
+
+    function showOtherForm(other = null) {
+      document.getElementById('other-modal').classList.remove('hidden');
+      document.getElementById('other-form-loading').classList.add('hidden');
+      document.getElementById('other-form').reset();
+      editingOtherId = null;
+      if (other) {
+        document.getElementById('other-form-title').innerText = 'Edit Content';
+        document.getElementById('other-id').value = other.id;
+        document.getElementById('other-title').value = other.title;
+        document.getElementById('other-description').value = other.description;
+        document.getElementById('other-url').value = other.url || '';
+        document.getElementById('other-imageurl').value = other.imageurl || '';
+        editingOtherId = other.id;
+      } else {
+        document.getElementById('other-form-title').innerText = 'Add New Content';
+      }
+    }
+    function closeOtherForm() {
+      document.getElementById('other-modal').classList.add('hidden');
+    }
+    window.showOtherForm = showOtherForm;
+    window.closeOtherForm = closeOtherForm;
+
+    function editOther(other) { showOtherForm(other); }
+    window.editOther = editOther;
+
+    document.getElementById('other-form').onsubmit = async (e) => {
+      e.preventDefault();
+      document.getElementById('other-form-loading').classList.remove('hidden');
+      const id = document.getElementById('other-id').value;
+      const title = document.getElementById('other-title').value;
+      const description = document.getElementById('other-description').value;
+      const url = document.getElementById('other-url').value;
+      const imageurl = document.getElementById('other-imageurl').value;
+      let payload = { title, description, url, imageurl };
+      let result;
+      if (editingOtherId) {
+        result = await supabase.from('other').update(payload).eq('id', editingOtherId);
+      } else {
+        result = await supabase.from('other').insert([payload]);
+      }
+      document.getElementById('other-form-loading').classList.add('hidden');
+      if (result.error) {
+        showToast('Failed to save content', true);
+      } else {
+        showToast('Content saved successfully');
+        closeOtherForm();
+        loadOther();
+      }
+    };
+
+    async function deleteOther(id) {
+      if (!confirm('Delete this content?')) return;
+      let { error } = await supabase.from('other').delete().eq('id', id);
+      if (error) showToast('Delete failed', true);
+      else { showToast('Content deleted'); loadOther(); }
+    }
+    window.deleteOther = deleteOther;
+
+    // --- Section selector logic ---
+    const sectionSelector = document.getElementById('section-selector');
+    const booksSection = document.getElementById('books-section');
+    const otherSection = document.getElementById('other-section');
+
+    sectionSelector.addEventListener('change', () => {
+      const selected = sectionSelector.value;
+      currentBookSection = selected;
+
+      // Show/hide sections accordingly
+      if (selected === 'books') {
+        booksSection.classList.remove('hidden');
+        otherSection.classList.add('hidden');
+      } else if (selected === 'other') {
+        booksSection.classList.add('hidden');
+        otherSection.classList.remove('hidden');
+      } else {
+        // If you add more sections, handle here
+        booksSection.classList.add('hidden');
+        otherSection.classList.add('hidden');
       }
 
-      clearForm();
-      loadBooks();
-    } catch (error) {
-      formMsg.textContent = 'Error: ' + error.message;
-    }
-  });
+      // Load data for the selected section
+      if (selected === 'books') loadBooks();
+      else if (selected === 'other') loadOther();
+    });
 
-  // Delete book handler
-  deleteBtn.addEventListener('click', async () => {
-    if (!editingBookId) return;
-    if (!confirm('Are you sure you want to delete this book?')) return;
-    try {
-      const { error } = await supabase.from('books').delete().eq('id', editingBookId);
-      if (error) throw error;
-      formMsg.textContent = 'Book deleted.';
-      clearForm();
-      loadBooks();
-    } catch (error) {
-      formMsg.textContent = 'Error deleting book: ' + error.message;
-    }
-  });
-</script>
+    // --- INIT ---
+    sectionSelector.dispatchEvent(new Event('change'));
 
+    // --- REALTIME SYNC ---
+    supabase.channel('books-db')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'books' }, payload => {
+        if (payload.new && payload.new.section === currentBookSection) loadBooks();
+        else if (payload.old && payload.old.section === currentBookSection) loadBooks();
+      })
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'other' }, payload => {
+        if (currentBookSection === 'other') loadOther();
+      })
+      .subscribe();
+  </script>
 </body>
 </html>
