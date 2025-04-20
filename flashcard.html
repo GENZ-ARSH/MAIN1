@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>GEN-Z Flashcards</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gradient-to-br from-gray-900 to-black text-white min-h-screen p-6">
+  <div class="max-w-xl mx-auto bg-gray-800 p-6 rounded-xl shadow-lg">
+    <h1 class="text-3xl font-bold mb-4 text-pink-400 text-center">🧠 GEN-Z Flashcards</h1>
+
+    <div class="space-y-4">
+      <input type="text" id="question" placeholder="Enter Question" class="w-full p-2 rounded bg-gray-700 text-white"/>
+      <input type="text" id="answer" placeholder="Enter Answer" class="w-full p-2 rounded bg-gray-700 text-white"/>
+      <button onclick="addFlashcard()" class="w-full bg-pink-500 hover:bg-pink-600 text-white font-bold p-2 rounded">➕ Add Flashcard</button>
+    </div>
+
+    <div id="flashcards" class="mt-6 space-y-4"></div>
+  </div>
+
+  <script>
+    let flashcards = [];
+
+    function addFlashcard() {
+      const question = document.getElementById("question").value;
+      const answer = document.getElementById("answer").value;
+      if (!question || !answer) return;
+
+      const card = { question, answer };
+      flashcards.push(card);
+      renderCards();
+      document.getElementById("question").value = "";
+      document.getElementById("answer").value = "";
+    }
+
+    function renderCards() {
+      const container = document.getElementById("flashcards");
+      container.innerHTML = "";
+      flashcards.forEach((card, index) => {
+        const div = document.createElement("div");
+        div.className = "bg-gray-700 p-4 rounded cursor-pointer hover:bg-gray-600";
+        div.innerHTML = `<strong>Q:</strong> ${card.question} <br><span class="hidden"><strong>A:</strong> ${card.answer}</span>`;
+        div.onclick = () => {
+          const answer = div.querySelector("span");
+          answer.classList.toggle("hidden");
+        };
+        container.appendChild(div);
+      });
+    }
+  </script>
+</body>
+</html>
