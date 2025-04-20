@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>GEN-Z Notes</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gradient-to-r from-gray-900 via-black to-gray-800 text-white p-6 min-h-screen">
+  <div class="max-w-2xl mx-auto bg-gray-900 rounded-xl p-6 shadow-lg">
+    <h1 class="text-3xl font-bold mb-4 text-green-400 text-center">📒 GEN-Z Notes Dashboard</h1>
+
+    <div class="space-y-3">
+      <input type="text" id="noteTitle" placeholder="Note Title" class="w-full p-2 rounded bg-gray-800 border border-gray-600 text-white">
+      <textarea id="noteContent" rows="4" placeholder="Note Content..." class="w-full p-2 rounded bg-gray-800 border border-gray-600 text-white"></textarea>
+      <button onclick="addNote()" class="w-full bg-green-500 hover:bg-green-600 p-2 font-bold rounded">➕ Add Note</button>
+    </div>
+
+    <div id="notesList" class="mt-6 space-y-4"></div>
+  </div>
+
+  <script>
+    let notes = JSON.parse(localStorage.getItem("genzNotes")) || [];
+
+    function saveNotes() {
+      localStorage.setItem("genzNotes", JSON.stringify(notes));
+    }
+
+    function renderNotes() {
+      const container = document.getElementById("notesList");
+      container.innerHTML = "";
+      notes.forEach((note, index) => {
+        const div = document.createElement("div");
+        div.className = "bg-gray-800 p-4 rounded shadow-md relative";
+        div.innerHTML = `
+          <h2 class="text-xl font-semibold text-yellow-300">${note.title}</h2>
+          <p class="text-gray-300 mt-1">${note.content}</p>
+          <button onclick="deleteNote(${index})" class="absolute top-2 right-2 text-red-400 hover:text-red-600 text-sm">❌</button>
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    function addNote() {
+      const title = document.getElementById("noteTitle").value;
+      const content = document.getElementById("noteContent").value;
+      if (!title || !content) return alert("Fill both fields!");
+
+      notes.push({ title, content });
+      saveNotes();
+      renderNotes();
+
+      document.getElementById("noteTitle").value = "";
+      document.getElementById("noteContent").value = "";
+    }
+
+    function deleteNote(index) {
+      notes.splice(index, 1);
+      saveNotes();
+      renderNotes();
+    }
+
+    renderNotes();
+  </script>
+</body>
+</html>
