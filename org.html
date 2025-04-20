@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Study Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <style>
+    /* Dark Theme with Neon Glass Effect */
+    body {
+      background-color: #121212;
+      color: #fff;
+      font-family: 'Roboto', sans-serif;
+    }
+
+    .glass-effect {
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 10px;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+
+    /* Neon Glow Effect */
+    .neon-glow {
+      color: #00ff99;
+      text-shadow: 0 0 10px #00ff99, 0 0 20px #00ff99, 0 0 30px #00ff99, 0 0 40px #00ff99;
+    }
+
+    /* Button Styling */
+    .btn-neon {
+      background-color: #00ff99;
+      color: black;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 10px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .btn-neon:hover {
+      background-color: #009966;
+      box-shadow: 0 0 10px #00ff99, 0 0 20px #00ff99;
+    }
+
+    /* Section Styling */
+    .section-title {
+      font-size: 2rem;
+      font-weight: 700;
+      color: #00ff99;
+      margin-bottom: 1.5rem;
+    }
+
+    /* Task and Habit List Styling */
+    .task-item, .habit-item {
+      background-color: rgba(255, 255, 255, 0.2);
+      border-radius: 10px;
+      margin: 10px 0;
+      padding: 15px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container mx-auto p-6">
+    <h1 class="text-center text-4xl font-bold neon-glow mb-8">📚 Study Dashboard</h1>
+
+    <!-- Habit Tracker -->
+    <div id="habit-section" class="glass-effect">
+      <h2 class="section-title">💪 Habit Tracker</h2>
+      <input type="text" id="habit-input" class="p-2 w-full mb-4 bg-transparent text-white border border-gray-600 rounded-lg" placeholder="Add a new habit...">
+      <button onclick="addHabit()" class="btn-neon w-full">Add Habit</button>
+      <ul id="habit-list" class="mt-4"></ul>
+    </div>
+
+    <!-- Task Management Section -->
+    <div id="task-section" class="glass-effect">
+      <h2 class="section-title">📅 Task Management</h2>
+      <input type="text" id="task-input" class="p-2 w-full mb-4 bg-transparent text-white border border-gray-600 rounded-lg" placeholder="Add a new task...">
+      <button onclick="addTask()" class="btn-neon w-full">Add Task</button>
+      <ul id="task-list" class="mt-4"></ul>
+    </div>
+
+    <!-- Study Progress Visualization -->
+    <div id="progress-section" class="glass-effect">
+      <h2 class="section-title">📈 Study Progress</h2>
+      <div id="progress-bar" class="w-full bg-gray-300 rounded-lg">
+        <div id="progress" class="bg-green-500 h-6 rounded-lg" style="width: 0;"></div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/supabase@2.0.0/supabase.min.js"></script>
+  <script>
+    // Initialize Supabase
+    const supabaseUrl = 'https://your-project-url.supabase.co';
+    const supabaseKey = 'your-anon-key';
+    const supabase = supabase.createClient(supabaseUrl, supabaseKey);
+
+    // User Authentication (Automatic login without signup/login buttons)
+    let user = null;
+
+    // Check if there's a user logged in
+    supabase.auth.onAuthStateChange((event, session) => {
+      user = session?.user || null;
+      if (user) {
+        loadUserTasks(user.id);
+        loadUserHabits(user.id);
+        updateProgress();
+      } else {
+        alert('Please log in');
+      }
+    });
+
+    // Load tasks
+    async function loadUserTasks(userId) {
+      const { data: tasks, error } = await supabase.from('tasks').select('*').eq('user_id', userId);
+      if (error) {
+        alert('Error fetching tasks: ' + error.message);
+      } else {
+        const taskList = document.getElementById('task-list');
+        taskList.innerHTML = '';
+        tasks.forEach(task => {
+          const taskItem = document.createElement('li');
+          taskItem.classList.add('task-item');
+          taskItem.innerHTML = `
+            <span>${task.name}</span>
+            <input type="checkbox" onclick="toggleTask(${task.id}, this)" ${task.completed ? 'checked' : ''}>
+          `;
+          taskList.appendChild(taskItem);
+        });
+      }
+    }
+
+    // Add Task
+    async function addTask() {
+      const taskInput = document.getElementById('task-input');
+      const taskText = taskInput.value.trim();
+      if (taskText) {
+        const { data, error } = await supabase.from('tasks').insert([{ name: taskText, user_id: user.id }]);
+        if (error) {
+          alert('Error adding task: ' + error.message);
+        } else {
+          loadUserTasks(user.id);
+          taskInput.value = '';
+        }
+      }
+    }
+
+    // Toggle task completion
+    async function toggleTask(taskId, checkbox) {
+      const { error } = await supabase.from('tasks').update({ completed: checkbox.checked }).eq('id', taskId);
+      if (error) {
+        alert('Error updating task: ' + error.message);
+      } else {
+        updateProgress();
+      }
+    }
+
+    // Load habits
+    async function loadUserHabits(userId) {
+      const { data: habits, error } = await supabase.from('habits').select('*').eq('user_id', userId);
+      if (error) {
+        alert('Error fetching habits: ' + error.message);
+      } else {
+        const habitList = document.getElementById('habit-list');
+        habitList.innerHTML = '';
+        habits.forEach(habit => {
+          const habitItem = document.createElement('li');
+          habitItem.classList.add('habit-item');
+          habitItem.innerHTML = `
+            <span>${habit.name}</span>
+            <input type="checkbox" onclick="toggleHabit(${habit.id}, this)" ${habit.completed ? 'checked' : ''}>
+          `;
+          habitList.appendChild(habitItem);
+        });
+      }
+    }
+
+    // Add Habit
+    async function addHabit() {
+      const habitInput = document.getElementById('habit-input');
+      const habitText = habitInput.value.trim();
+      if (habitText) {
+        const { data, error } = await supabase.from('habits').insert([{ name: habitText, user_id: user.id }]);
+        if (error) {
+          alert('Error adding habit: ' + error.message);
+        } else {
+          loadUserHabits(user.id);
+          habitInput.value = '';
+        }
+      }
+    }
+
+    // Toggle habit completion
+    async function toggleHabit(habitId, checkbox) {
+      const { error } = await supabase.from('habits').update({ completed: checkbox.checked }).eq('id', habitId);
+      if (error) {
+        alert('Error updating habit: ' + error.message);
+      }
+    }
+
+    // Update Progress bar
+    async function updateProgress() {
+      const { data: tasks, error } = await supabase.from('tasks').select('*').eq('user_id', user.id);
+      if (error) {
+        alert('Error fetching tasks: ' + error.message);
+      } else {
+        const completedTasks = tasks.filter(task => task.completed);
+        const progress = (completedTasks.length / tasks.length) * 100;
+        document.getElementById('progress').style.width = `${progress}%`;
+      }
+    }
+  </script>
+</body>
+</html>
