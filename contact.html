@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Contact GEN-Z-LIBRARY</title>
+  <meta name="theme-color" content="#0ff" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      font-family: 'Orbitron', 'Montserrat', Arial, sans-serif;
+    }
+  </style>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap" rel="stylesheet" />
+</head>
+<body class="bg-gradient-to-b from-black via-gray-900 to-purple-950 min-h-screen text-white">
+
+<!-- Navigation -->
+<nav class="glass fixed top-0 left-1/2 transform -translate-x-1/2 px-8 py-3 flex gap-8 items-center z-50 shadow-lg text-lg font-bold bg-black bg-opacity-60 backdrop-blur-md">
+  <a href="index.html" class="hover:text-cyan-400">Home</a>
+  <a href="about.html" class="hover:text-cyan-400">About</a>
+  <a href="courses.html" class="hover:text-cyan-400">Courses</a>
+  <a href="faq.html" class="hover:text-cyan-400">FAQ</a>
+  <a href="contact.html" class="text-cyan-400 underline">Contact</a>
+  <a href="admin.html" class="hover:text-pink-400">Admin</a>
+  <a href="team.html" class="hover:text-yellow-400">Team</a>
+</nav>
+
+<main class="max-w-3xl mx-auto px-6 pt-24 pb-16">
+  <h1 class="text-5xl font-extrabold text-cyan-400 mb-8 text-center">Contact GEN-Z-LIBRARY</h1>
+
+  <p class="text-gray-300 mb-8 text-center">
+    Have questions or want to collaborate? Reach out to us using the form below!
+  </p>
+
+  <form id="contact-form" class="glass p-8 rounded-xl shadow-lg flex flex-col gap-6" novalidate>
+    <label class="flex flex-col gap-1">
+      <span class="font-semibold">Name</span>
+      <input type="text" id="name" name="name" required class="p-3 rounded bg-gray-800 text-white focus:outline-none focus:ring-2 focus:ring-cyan-400" />
+      <span class="text-red-500 text-sm hidden" id="name-error">Please enter your name.</span>
+    </label>
+
+    <label class="flex flex-col gap-1">
+      <span class="font-semibold">Email</span>
+      <input type="email" id="email" name="email" required class="p-3 rounded bg-gray-800 text-white focus:outline-none focus:ring-2 focus:ring-cyan-400" />
+      <span class="text-red-500 text-sm hidden" id="email-error">Please enter a valid email.</span>
+    </label>
+
+    <label class="flex flex-col gap-1">
+      <span class="font-semibold">Message</span>
+      <textarea id="message" name="message" rows="5" required class="p-3 rounded bg-gray-800 text-white focus:outline-none focus:ring-2 focus:ring-cyan-400"></textarea>
+      <span class="text-red-500 text-sm hidden" id="message-error">Please enter your message.</span>
+    </label>
+
+    <button type="submit" class="bg-cyan-500 hover:bg-cyan-600 text-black font-bold py-3 rounded ripple transition">
+      Send Message
+    </button>
+
+    <p id="form-status" class="text-center mt-4"></p>
+  </form>
+
+  <section class="mt-12 text-center text-gray-400">
+    <p>Email: <a href="mailto:contact@genzlibrary.com" class="underline hover:text-cyan-400">contact@genzlibrary.com</a></p>
+    <p>Phone: <a href="tel:+1234567890" class="underline hover:text-cyan-400">+1 234 567 890</a></p>
+    <p>Follow us on  
+      <a href="#" class="underline hover:text-cyan-400">Twitter</a>,  
+      <a href="#" class="underline hover:text-cyan-400">Instagram</a>,  
+      <a href="#" class="underline hover:text-cyan-400">Facebook</a>
+    </p>
+  </section>
+</main>
+
+<footer class="glass fixed bottom-0 left-1/2 -translate-x-1/2 px-8 py-4 flex gap-8 items-center z-40 shadow-lg text-lg font-bold bg-black bg-opacity-60 backdrop-blur-md w-full max-w-7xl">
+  <a href="index.html" class="hover:text-cyan-400">Home</a>
+  <a href="admin.html" class="hover:text-pink-400">Admin</a>
+  <a href="team.html" class="hover:text-yellow-400">Team</a>
+  <span class="ml-auto text-cyan-300">Crafted by GEN-Z-ARSH & AI, 3009</span>
+</footer>
+
+<script>
+  const form = document.getElementById('contact-form');
+  const nameInput = document.getElementById('name');
+  const emailInput = document.getElementById('email');
+  const messageInput = document.getElementById('message');
+  const nameError = document.getElementById('name-error');
+  const emailError = document.getElementById('email-error');
+  const messageError = document.getElementById('message-error');
+  const formStatus = document.getElementById('form-status');
+
+  form.addEventListener('submit', e => {
+    e.preventDefault();
+    let valid = true;
+
+    // Reset errors
+    nameError.classList.add('hidden');
+    emailError.classList.add('hidden');
+    messageError.classList.add('hidden');
+    formStatus.textContent = '';
+
+    // Validate name
+    if (!nameInput.value.trim()) {
+      nameError.classList.remove('hidden');
+      valid = false;
+    }
+
+    // Validate email (simple regex)
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(emailInput.value.trim())) {
+      emailError.classList.remove('hidden');
+      valid = false;
+    }
+
+    // Validate message
+    if (!messageInput.value.trim()) {
+      messageError.classList.remove('hidden');
+      valid = false;
+    }
+
+    if (!valid) return;
+
+    // Simulate sending message
+    formStatus.textContent = 'Sending message...';
+
+    setTimeout(() => {
+      formStatus.textContent = 'Thank you! Your message has been sent.';
+      form.reset();
+    }, 1500);
+  });
+</script>
+
+</body>
+</html>

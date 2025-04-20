@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>GEN-Z-LIBRARY 2050 - Futuristic Learning</title>
+  <meta name="theme-color" content="#0ff" />
+  <link rel="manifest" href="manifest.json" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+  <style>
+    /* Glitch Text */
+    .glitch {
+      position: relative;
+      color: #0ff;
+      font-weight: 900;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      animation: glitch 2s infinite;
+    }
+    .glitch::before,
+    .glitch::after {
+      content: attr(data-text);
+      position: absolute;
+      left: 0; top: 0;
+      width: 100%;
+      overflow: hidden;
+      clip: rect(0, 900px, 0, 0);
+    }
+    .glitch::before {
+      left: 2px;
+      text-shadow: -2px 0 red;
+      animation: glitchTop 2s infinite;
+    }
+    .glitch::after {
+      left: -2px;
+      text-shadow: -2px 0 blue;
+      animation: glitchBottom 2s infinite;
+    }
+    @keyframes glitch {
+      0%, 100% { text-shadow: 0 0 5px #0ff, 0 0 10px #0ff, 0 0 20px #0ff; }
+      50% { text-shadow: 0 0 10px #f0f, 0 0 20px #f0f, 0 0 30px #f0f; }
+    }
+    @keyframes glitchTop {
+      0%, 40%, 80%, 100% { clip: rect(0, 900px, 0, 0); transform: translate(0); }
+      20%, 60% { clip: rect(0, 900px, 50px, 0); transform: translate(-2px, -2px); }
+    }
+    @keyframes glitchBottom {
+      0%, 40%, 80%, 100% { clip: rect(0, 900px, 0, 0); transform: translate(0); }
+      20%, 60% { clip: rect(30px, 900px, 80px, 0); transform: translate(2px, 2px); }
+    }
+
+    /* Glassmorphism */
+    .glass {
+      background: rgba(255 255 255 / 0.1);
+      backdrop-filter: blur(10px);
+      border-radius: 1rem;
+      border: 1px solid rgba(255 255 255 / 0.2);
+    }
+
+    /* 3D tilt effect */
+    .card-3d {
+      transform-style: preserve-3d;
+      transition: transform 0.3s ease;
+      cursor: pointer;
+    }
+    .card-3d:hover {
+      transform: rotateY(10deg) rotateX(5deg);
+      box-shadow: 0 0 20px #0ff;
+    }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #0ff;
+      border-radius: 10px;
+    }
+
+    /* Accessibility font sizes */
+    .font-small { font-size: 0.85rem; }
+    .font-medium { font-size: 1rem; }
+    .font-large { font-size: 1.25rem; }
+
+    /* Badge styles */
+    .badge {
+      background: linear-gradient(45deg, #0ff, #f0f);
+      padding: 0.2em 0.5em;
+      border-radius: 0.5em;
+      font-weight: bold;
+      color: black;
+      box-shadow: 0 0 8px #0ff;
+      user-select: none;
+    }
+
+    /* Ripple effect on buttons */
+    .ripple {
+      position: relative;
+      overflow: hidden;
+    }
+    .ripple:after {
+      content: "";
+      position: absolute;
+      border-radius: 50%;
+      width: 100%;
+      height: 100%;
+      top: 0; left: 0;
+      pointer-events: none;
+      background: rgba(255, 255, 255, 0.3);
+      animation: rippleAnim 0.6s linear;
+      transform: scale(0);
+      opacity: 0;
+    }
+    .ripple:active:after {
+      transform: scale(2);
+      opacity: 1;
+      transition: 0s;
+    }
+    @keyframes rippleAnim {
+      to { transform: scale(2); opacity: 0; }
+    }
+  </style>
+</head>
+<body class="bg-gradient-to-br from-black via-gray-900 to-purple-950 min-h-screen text-white select-none">
+
+<!-- Navigation -->
+<nav class="glass fixed top-4 left-1/2 transform -translate-x-1/2 px-8 py-3 flex gap-8 items-center z-50 shadow-lg text-lg font-bold">
+  <a href="#" class="hover:text-cyan-400">Home</a>
+  <a href="admin.html" class="hover:text-pink-400">Admin</a>
+  <a href="team.html" class="hover:text-yellow-400">Team</a>
+  <a href="about.html" class="hover:text-green-400">About</a>
+  <a href="contact.html" class="hover:text-purple-400">Contact</a>
+</nav>
+
+<!-- Hero -->
+<section class="min-h-screen flex flex-col justify-center items-center text-center px-4 pt-20">
+  <h1 class="glitch text-7xl md:text-8xl mb-6 font-extrabold" data-text="GEN-Z-LIBRARY 3009">GEN-Z-LIBRARY 3009</h1>
+  <p class="mt-4 text-2xl md:text-3xl font-mono max-w-3xl text-cyan-300">
+    AI-powered. Hyper-immersive. Limitless Knowledge.
+  </p>
+  <button id="explore-btn" class="mt-10 px-12 py-5 rounded-full bg-gradient-to-r from-pink-500 via-cyan-400 to-purple-600 text-black font-extrabold text-3xl shadow-xl ripple hover:scale-105 transition-transform duration-300">
+    🚀 Explore The Vault
+  </button>
+  <div class="mt-6 flex gap-6 text-cyan-400 font-bold">
+    <span class="badge">AI Chat</span>
+    <span class="badge">Voice Search</span>
+    <span class="badge">3D Books</span>
+    <span class="badge">Gamification</span>
+  </div>
+</section>
+
+<!-- Class Selector -->
+<section id="class-selector" class="py-16 px-4 max-w-7xl mx-auto">
+  <h2 class="text-4xl font-bold text-cyan-400 mb-10 text-center">Select Your Class</h2>
+  <div class="flex flex-wrap justify-center gap-8">
+    <div class="card-3d glass p-8 w-52 h-52 flex items-center justify-center text-4xl font-bold cursor-pointer" data-class="9th">9th</div>
+    <div class="card-3d glass p-8 w-52 h-52 flex items-center justify-center text-4xl font-bold cursor-pointer" data-class="10th">10th</div>
+    <div class="card-3d glass p-8 w-52 h-52 flex items-center justify-center text-4xl font-bold cursor-pointer" data-class="11th">11th</div>
+    <div class="card-3d glass p-8 w-52 h-52 flex items-center justify-center text-4xl font-bold cursor-pointer" data-class="12th">12th</div>
+    <div class="card-3d glass p-8 w-52 h-52 flex items-center justify-center text-4xl font-bold cursor-pointer" data-class="NDA">NDA</div>
+  </div>
+</section>
+
+<!-- Books Section -->
+<section id="books-section" class="max-w-7xl mx-auto px-4 py-10 hidden">
+  <div class="flex justify-between items-center mb-6">
+    <h2 class="text-3xl font-bold text-cyan-400">Books for <span id="current-class"></span></h2>
+    <button id="back-to-classes" class="text-pink-500 hover:underline">Back to Classes</button>
+  </div>
+  <div class="flex gap-4 mb-6 flex-wrap">
+    <input id="search-books" type="search" placeholder="Search books, authors, topics..." class="flex-grow p-3 rounded glass text-white" aria-label="Search books" />
+    <button id="voice-search-btn" class="voice-btn bg-cyan-500 rounded-full w-14 h-14 flex items-center justify-center shadow-xl ripple" title="Voice Search">
+      🎤
+    </button>
+  </div>
+  <div id="books-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8"></div>
+
+  <!-- Gamification Progress -->
+  <section id="progress-section" class="mt-12 glass p-6 rounded-lg">
+    <h3 class="text-2xl font-bold text-pink-400 mb-4">Your Learning Progress</h3>
+    <div class="w-full bg-gray-700 rounded-full h-6 overflow-hidden">
+      <div id="progress-bar" class="bg-cyan-400 h-6 rounded-full" style="width: 0%;"></div>
+    </div>
+    <p class="mt-2 text-cyan-300 font-semibold">Books Completed: <span id="books-completed">0</span> / <span id="total-books">0</span></p>
+  </section>
+
+  <!-- Badges -->
+  <section id="badges-section" class="mt-12 flex gap-4 flex-wrap">
+    <div class="badge">📚 Bookworm</div>
+    <div class="badge">🚀 Speed Reader</div>
+    <div class="badge">🤖 AI Enthusiast</div>
+  </section>
+
+  <!-- AI Recommendations -->
+  <section id="ai-recommendations" class="mt-12 hidden">
+    <h3 class="text-2xl font-bold text-pink-400 mb-4">🤖 AI Recommendations</h3>
+    <div id="ai-reco-list" class="flex flex-wrap gap-4"></div>
+  </section>
+
+  <!-- Discussion Forum (Basic UI) -->
+  <section id="discussion-section" class="mt-12 glass p-6 rounded-lg">
+    <h3 class="text-2xl font-bold text-pink-400 mb-4">Discussion Forum</h3>
+    <ul id="discussion-list" class="max-h-64 overflow-auto space-y-2 mb-4"></ul>
+    <input id="discussion-input" type="text" placeholder="Type your message..." class="w-full p-2 rounded bg-gray-800 text-white" aria-label="Discussion input" />
+    <button id="discussion-send-btn" class="mt-2 px-4 py-2 bg-cyan-500 rounded text-black font-bold ripple">Send</button>
+  </section>
+
+  <!-- Multimedia Section -->
+  <section id="multimedia-section" class="mt-12 max-w-7xl mx-auto px-4 py-10">
+    <h3 class="text-3xl font-bold text-cyan-400 mb-6 text-center">Multimedia Tutorials</h3>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+      <div class="glass p-4 rounded-lg shadow-lg">
+        <video controls class="w-full rounded-lg">
+          <source src="https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.webm" type="video/webm" />
+          Your browser does not support the video tag.
+        </video>
+        <h4 class="mt-2 font-bold text-white">Physics Basics</h4>
+      </div>
+      <div class="glass p-4 rounded-lg shadow-lg">
+        <audio controls class="w-full rounded-lg">
+          <source src="https://interactive-examples.mdn.mozilla.net/media/examples/t-rex-roar.mp3" type="audio/mpeg" />
+          Your browser does not support the audio element.
+        </audio>
+        <h4 class="mt-2 font-bold text-white">Motivational Speech</h4>
+      </div>
+      <div class="glass p-4 rounded-lg shadow-lg flex items-center justify-center text-4xl font-bold text-cyan-400">
+        AR/VR Coming Soon
+      </div>
+    </div>
+  </section>
+
+  <!-- Accessibility Controls -->
+  <section id="accessibility-section" class="fixed bottom-6 left-6 glass p-4 rounded-lg flex flex-col gap-2 z-50">
+    <label for="font-size-select" class="text-cyan-300 font-bold mb-1">Font Size</label>
+    <select id="font-size-select" class="p-2 rounded bg-gray-800 text-white">
+      <option value="font-small">Small</option>
+      <option value="font-medium" selected>Medium</option>
+      <option value="font-large">Large</option>
+    </select>
+    <button id="toggle-theme" class="mt-2 p-2 rounded bg-cyan-600 text-black font-bold">Toggle Dark/Light</button>
+  </section>
+
+  <!-- Footer -->
+  <footer class="glass fixed bottom-0 left-1/2 -translate-x-1/2 px-8 py-4 flex gap-8 items-center z-40 shadow-lg text-lg font-bold">
+    <a href="#" class="hover:text-cyan-400">Home</a>
+    <a href="admin.html" class="hover:text-pink-400">Admin</a>
+    <a href="team.html" class="hover:text-yellow-400">Team</a>
+    <span class="ml-auto text-cyan-300">Crafted by GEN-Z-ARSH & AI, 3009</span>
+  </footer>
+
+<script>
+  // Supabase config
+  const SUPABASE_URL = 'https://aqbfkyggwivuzvvqedvi.supabase.co';
+  const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFxYmZreWdnd2l2dXp2dnFlZHZpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDUwNDMwMzgsImV4cCI6MjA2MDYxOTAzOH0.Nd4iCgjfbEKTOjlx5xNT7Dh-eFSYd8NPe20KNraBdM0';
+  const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+  // Elements
+  const classCards = document.querySelectorAll('.card-3d');
+  const booksSection = document.getElementById('books-section');
+  const classSelector = document.getElementById('class-selector');
+  const currentClassSpan = document.getElementById('current-class');
+  const backToClassesBtn = document.getElementById('back-to-classes');
+  const booksGrid = document.getElementById('books-grid');
+  const searchBooksInput = document.getElementById('search-books');
+  const aiRecoSection = document.getElementById('ai-recommendations');
+  const aiRecoList = document.getElementById('ai-reco-list');
+  const progressBar = document.getElementById('progress-bar');
+  const booksCompletedSpan = document.getElementById('books-completed');
+  const totalBooksSpan = document.getElementById('total-books');
+  const discussionList = document.getElementById('discussion-list');
+  const discussionInput = document.getElementById('discussion-input');
+  const discussionSendBtn = document.getElementById('discussion-send-btn');
+  const voiceSearchBtn = document.getElementById('voice-search-btn');
+  const exploreBtn = document.getElementById('explore-btn');
+  const accessibilitySection = document.getElementById('accessibility-section');
+  const fontSizeSelect = document.getElementById('font-size-select');
+  const toggleThemeBtn = document.getElementById('toggle-theme');
+
+  let currentClass = null;
+  let allBooks = [];
+  let filteredBooks = [];
+  let userProgress = 0;
+  let totalBooks = 0;
+
+  // Initialize font size and theme from localStorage
+  function initAccessibility() {
+    const fontSize = localStorage.getItem('fontSize') || 'font-medium';
+    document.body.classList.add(fontSize);
+    fontSizeSelect.value = fontSize;
+
+    const theme = localStorage.getItem('theme') || 'dark';
+    if (theme === 'light') {
+      document.documentElement.setAttribute('data-theme', 'light');
+      document.body.classList.add('text-black', 'bg-white');
+    } else {
+      document.documentElement.setAttribute('data-theme', 'dark');
+      document.body.classList.remove('text-black', 'bg-white');
+    }
+  }
+  initAccessibility();
+
+  // Font size change
+  fontSizeSelect.addEventListener('change', () => {
+    document.body.classList.remove('font-small', 'font-medium', 'font-large');
+    document.body.classList.add(fontSizeSelect.value);
+    localStorage.setItem('fontSize', fontSizeSelect.value);
+  });
+
+  // Theme toggle
+  toggleThemeBtn.addEventListener('click', () => {
+    const currentTheme = document.documentElement.getAttribute('data-theme');
+    if (currentTheme === 'dark') {
+      document.documentElement.setAttribute('data-theme', 'light');
+      document.body.classList.add('text-black', 'bg-white');
+      localStorage.setItem('theme', 'light');
+    } else {
+      document.documentElement.setAttribute('data-theme', 'dark');
+      document.body.classList.remove('text-black', 'bg-white');
+      localStorage.setItem('theme', 'dark');
+    }
+  });
+
+  // Class card click
+  classCards.forEach(card => {
+    card.addEventListener('click', () => {
+      currentClass = card.dataset.class;
+      currentClassSpan.textContent = currentClass;
+      classSelector.style.display = 'none';
+      booksSection.classList.remove('hidden');
+      loadBooks(currentClass);
+      loadUserProgress();
+    });
+  });
+
+  // Back to classes
+  backToClassesBtn.addEventListener('click', () => {
+    booksSection.classList.add('hidden');
+    classSelector.style.display = 'block';
+    aiRecoSection.classList.add('hidden');
+    booksGrid.innerHTML = '';
+  });
+
+  // Load books from Supabase
+  async function loadBooks(cls) {
+    booksGrid.innerHTML = '<p class="col-span-full text-center text-cyan-400">Loading books...</p>';
+    const { data, error } = await supabase.from('books').select('*').eq('class', cls).order('title');
+    if (error) {
+      booksGrid.innerHTML = '<p class="col-span-full text-center text-red-500">Error loading books.</p>';
+      return;
+    }
+    allBooks = data;
+    filteredBooks = [...allBooks];
+    totalBooks = data.length;
+    totalBooksSpan.textContent = totalBooks;
+    renderBooks(filteredBooks);
+  }
+
+  // Render books grid
+  function renderBooks(books) {
+    booksGrid.innerHTML = '';
+    if (books.length === 0) {
+      booksGrid.innerHTML = '<p class="col-span-full text-center text-gray-400">No books found.</p>';
+      return;
+    }
+    books.forEach(book => {
+      const card = document.createElement('div');
+      card.className = 'card-3d glass p-4 rounded-xl shadow-xl flex flex-col items-center cursor-pointer';
+      card.innerHTML = `
+        <img src="${book.cover_url || 'https://via.placeholder.com/150x200?text=No+Cover'}" alt="${book.title}" class="w-32 h-44 object-cover rounded mb-4 shadow-lg" />
+        <h3 class="text-xl font-bold text-white mb-1">${book.title}</h3>
+        <p class="text-cyan-300 mb-2">${book.author}</p>
+        <div class="flex justify-between items-center w-full text-xs text-gray-300 mb-2">
+          <span>${book.format}, ${book.size}</span>
+          <a href="${book.file_url}" target="_blank" class="px-3 py-1 bg-cyan-500 rounded-full text-black font-bold ripple">Download</a>
+        </div>
+        <button class="mt-2 px-4 py-1 bg-pink-600 rounded-full text-white font-bold mark-read-btn">Mark as Read</button>
+      `;
+      // Mark as read button click
+      card.querySelector('.mark-read-btn').addEventListener('click', () => {
+        markBookAsRead(book.id);
+      });
+      booksGrid.appendChild(card);
+    });
+  }
+
+  // Search books
+  searchBooksInput.addEventListener('input', () => {
+    const val = searchBooksInput.value.toLowerCase();
+    filteredBooks = allBooks.filter(b => b.title.toLowerCase().includes(val) || b.author.toLowerCase().includes(val));
+    renderBooks(filteredBooks);
+    aiRecoSection.classList.remove('hidden');
+    aiRecoList.innerHTML = `
+      <div class="glass px-6 py-3 rounded-lg text-lg font-bold text-cyan-200">🤖 "Quantum Physics for Gen Z"</div>
+      <div class="glass px-6 py-3 rounded-lg text-lg font-bold text-pink-200">🤖 "AI & The Future of Learning"</div>
+      <div class="glass px-6 py-3 rounded-lg text-lg font-bold text-yellow-200">🤖 "Neural Networks Demystified"</div>
+    `;
+  });
+
+  // Voice search placeholder
+  voiceSearchBtn.addEventListener('click', () => {
+    alert("🎤 Voice search coming soon! (AI-powered voice search will appear here.)");
+  });
+
+  // Explore button scroll to classes
+  exploreBtn.addEventListener('click', () => {
+    classSelector.scrollIntoView({ behavior: 'smooth' });
+  });
+
+  // User progress tracking (localStorage mock)
+  function loadUserProgress() {
+    const readBooks = JSON.parse(localStorage.getItem('readBooks') || '[]');
+    const readCount = readBooks.filter(id => allBooks.some(b => b.id === id)).length;
+    userProgress = readCount;
+    booksCompletedSpan.textContent = userProgress;
+    const percent = totalBooks ? (userProgress / totalBooks) * 100 : 0;
+    progressBar.style.width = percent + '%';
+  }
+
+  // Mark book as read
+  function markBookAsRead(bookId) {
+    let readBooks = JSON.parse(localStorage.getItem('readBooks') || '[]');
+    if (!readBooks.includes(bookId)) {
+      readBooks.push(bookId);
+      localStorage.setItem('readBooks', JSON.stringify(readBooks));
+      loadUserProgress();
+      alert('Marked as read! Keep going 🚀');
+    } else {
+      alert('You already marked this book as read.');
+    }
+  }
+
+  // Discussion forum (mocked)
+  let discussionMessages = [];
+  function renderDiscussion() {
+    discussionList.innerHTML = '';
+    discussionMessages.forEach(msg => {
+      const li = document.createElement('li');
+      li.className = 'bg-gray-800 p-2 rounded mb-1';
+      li.textContent = msg;
+      discussionList.appendChild(li);
+    });
+  }
+  discussionSendBtn.addEventListener('click', () => {
+    const val = discussionInput.value.trim();
+    if (val) {
+      discussionMessages.push(val);
+      discussionInput.value = '';
+      renderDiscussion();
+    }
+  });
+
+  // Initialize
+  document.addEventListener('DOMContentLoaded', () => {
+    initAccessibility();
+  });
+</script>
+
+</body>
+</html>

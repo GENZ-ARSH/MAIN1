@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Virtual Study Lab - GEN-Z-LIBRARY</title>
+  <meta name="theme-color" content="#0ff" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      font-family: 'Orbitron', 'Montserrat', Arial, sans-serif;
+      background: linear-gradient(135deg, #000, #0ff, #f0f);
+      background-size: 400% 400%;
+      animation: gradientBG 15s ease infinite;
+      color: white;
+      overflow-x: hidden;
+    }
+    @keyframes gradientBG {
+      0% {background-position:0% 50%;}
+      50% {background-position:100% 50%;}
+      100% {background-position:0% 50%;}
+    }
+    .glass {
+      background: rgba(255 255 255 / 0.1);
+      backdrop-filter: blur(15px);
+      border-radius: 1rem;
+      border: 1.5px solid rgba(255 255 255 / 0.2);
+    }
+    .neon-text {
+      text-shadow:
+        0 0 5px #0ff,
+        0 0 10px #0ff,
+        0 0 20px #0ff,
+        0 0 40px #0ff;
+    }
+    .carousel {
+      perspective: 1000px;
+      width: 100%;
+      height: 300px;
+      position: relative;
+      margin: 2rem auto;
+      max-width: 800px;
+    }
+    .carousel__container {
+      width: 100%;
+      height: 100%;
+      position: absolute;
+      transform-style: preserve-3d;
+      transition: transform 1s;
+    }
+    .carousel__item {
+      position: absolute;
+      width: 180px;
+      height: 260px;
+      left: calc(50% - 90px);
+      top: 20px;
+      border-radius: 1rem;
+      overflow: hidden;
+      box-shadow: 0 0 20px #0ff;
+      background: linear-gradient(135deg, #0ff, #f0f);
+      cursor: pointer;
+      user-select: none;
+      transition: transform 0.5s, box-shadow 0.5s;
+    }
+    .carousel__item:hover {
+      box-shadow: 0 0 40px #f0f;
+      transform: scale(1.1);
+      z-index: 10;
+    }
+    /* Positioning carousel items in circle */
+  </style>
+</head>
+<body>
+
+<!-- Navigation -->
+<nav class="glass fixed top-0 left-1/2 transform -translate-x-1/2 px-8 py-3 flex gap-8 items-center z-50 shadow-lg text-lg font-bold bg-black bg-opacity-60 backdrop-blur-md w-full max-w-7xl">
+  <a href="index.html" class="hover:text-cyan-400">Home</a>
+  <a href="about.html" class="hover:text-cyan-400">About</a>
+  <a href="contact.html" class="hover:text-cyan-400">Contact</a>
+  <a href="forum.html" class="hover:text-cyan-400">Forum</a>
+  <a href="admin.html" class="hover:text-pink-400">Admin</a>
+  <a href="team.html" class="hover:text-yellow-400">Team</a>
+  <a href="study-lab.html" class="text-cyan-400 underline">Study Lab</a>
+</nav>
+
+<main class="pt-24 max-w-7xl mx-auto px-6 text-center">
+
+  <h1 class="text-6xl font-extrabold neon-text mb-8">Virtual Study Lab</h1>
+
+  <!-- AI Study Assistant -->
+  <section class="glass p-6 rounded-xl mb-12 max-w-3xl mx-auto shadow-lg">
+    <h2 class="text-3xl font-bold mb-4">AI Study Assistant</h2>
+    <div id="chat-box" class="bg-black bg-opacity-70 rounded p-4 h-64 overflow-y-auto text-left mb-4" style="font-family: monospace;">
+      <p><em>Ask me anything about your studies!</em></p>
+    </div>
+    <input id="chat-input" type="text" placeholder="Type your question..." class="w-full p-3 rounded bg-gray-800 text-white mb-2" />
+    <button id="send-btn" class="bg-cyan-500 hover:bg-cyan-600 text-black font-bold py-3 rounded w-full ripple">Send</button>
+  </section>
+
+  <!-- 3D Rotating Book Carousel -->
+  <section class="mb-12">
+    <h2 class="text-3xl font-bold mb-6">Explore Books</h2>
+    <div class="carousel" aria-label="3D rotating book carousel">
+      <div class="carousel__container" id="carousel-container">
+        <!-- Book items inserted by JS -->
+      </div>
+    </div>
+  </section>
+
+  <!-- Quick Tools -->
+  <section class="glass p-6 rounded-xl max-w-5xl mx-auto shadow-lg grid grid-cols-1 md:grid-cols-3 gap-8">
+    <div class="p-4 bg-gradient-to-tr from-cyan-600 to-pink-600 rounded-lg shadow-lg">
+      <h3 class="text-xl font-bold mb-2">⏲️ Study Timer</h3>
+      <p>Focus sessions with Pomodoro technique.</p>
+      <button id="start-timer" class="mt-4 px-4 py-2 bg-black bg-opacity-70 rounded hover:bg-black/90 transition">Start Timer</button>
+      <p id="timer-display" class="mt-2 text-2xl font-mono"></p>
+    </div>
+    <div class="p-4 bg-gradient-to-tr from-pink-600 to-cyan-600 rounded-lg shadow-lg">
+      <h3 class="text-xl font-bold mb-2">📝 Quick Notes</h3>
+      <textarea id="quick-notes" rows="6" placeholder="Write your notes here..." class="w-full p-2 rounded bg-black bg-opacity-70 text-white"></textarea>
+      <button id="save-notes" class="mt-4 px-4 py-2 bg-black bg-opacity-70 rounded hover:bg-black/90 transition">Save Notes</button>
+    </div>
+    <div class="p-4 bg-gradient-to-tr from-purple-600 to-cyan-600 rounded-lg shadow-lg">
+      <h3 class="text-xl font-bold mb-2">📇 Flashcards</h3>
+      <p>Coming soon: Interactive flashcards to boost memory!</p>
+    </div>
+  </section>
+
+  <!-- Voice Command Button -->
+  <button id="voice-btn" class="fixed bottom-8 right-8 bg-cyan-500 rounded-full w-16 h-16 flex items-center justify-center shadow-xl neon-text ripple" title="Voice Command">
+    🎤
+  </button>
+
+</main>
+
+<footer class="glass fixed bottom-0 left-1/2 -translate-x-1/2 px-8 py-4 flex gap-8 items-center z-40 shadow-lg text-lg font-bold bg-black bg-opacity-60 backdrop-blur-md w-full max-w-7xl">
+  <a href="index.html" class="hover:text-cyan-400">Home</a>
+  <a href="admin.html" class="hover:text-pink-400">Admin</a>
+  <a href="team.html" class="hover:text-yellow-400">Team</a>
+  <span class="ml-auto text-cyan-300">Crafted by GEN-Z-ARSH & AI, 3009</span>
+</footer>
+
+<script>
+  // Sample books for carousel
+  const books = [
+    { title: "Quantum Physics", cover: "https://via.placeholder.com/180x260?text=Quantum+Physics" },
+    { title: "AI & Future", cover: "https://via.placeholder.com/180x260?text=AI+%26+Future" },
+    { title: "Neural Networks", cover: "https://via.placeholder.com/180x260?text=Neural+Networks" },
+    { title: "Cybersecurity", cover: "https://via.placeholder.com/180x260?text=Cybersecurity" },
+    { title: "Space Exploration", cover: "https://via.placeholder.com/180x260?text=Space+Exploration" }
+  ];
+
+  const container = document.getElementById('carousel-container');
+  const itemCount = books.length;
+  const theta = 360 / itemCount;
+  let currAngle = 0;
+
+  // Create carousel items
+  books.forEach((book, i) => {
+    const item = document.createElement('div');
+    item.className = 'carousel__item';
+    item.style.transform = `rotateY(${i * theta}deg) translateZ(350px)`;
+    item.title = book.title;
+    item.innerHTML = `<img src="${book.cover}" alt="${book.title}" class="w-full h-full object-cover rounded-lg" />`;
+    container.appendChild(item);
+  });
+
+  // Rotate carousel every 4 seconds
+  setInterval(() => {
+    currAngle -= theta;
+    container.style.transform = `translateZ(-350px) rotateY(${currAngle}deg)`;
+  }, 4000);
+
+  // AI Study Assistant Chat (mock)
+  const chatBox = document.getElementById('chat-box');
+  const chatInput = document.getElementById('chat-input');
+  const sendBtn = document.getElementById('send-btn');
+
+  sendBtn.addEventListener('click', () => {
+    const question = chatInput.value.trim();
+    if (!question) return;
+    appendMessage(`You: ${question}`);
+    chatInput.value = '';
+    setTimeout(() => {
+      appendMessage(`AI: That's a great question! Let's explore it together...`);
+      chatBox.scrollTop = chatBox.scrollHeight;
+    }, 1000);
+  });
+
+  function appendMessage(msg) {
+    const p = document.createElement('p');
+    p.textContent = msg;
+    chatBox.appendChild(p);
+    chatBox.scrollTop = chatBox.scrollHeight;
+  }
+
+  // Study Timer
+  const startTimerBtn = document.getElementById('start-timer');
+  const timerDisplay = document.getElementById('timer-display');
+  let timerInterval;
+  let timeLeft = 25 * 60; // 25 minutes
+
+  startTimerBtn.addEventListener('click', () => {
+    if (timerInterval) {
+      clearInterval(timerInterval);
+      timerInterval = null;
+      timerDisplay.textContent = '';
+      startTimerBtn.textContent = 'Start Timer';
+      timeLeft = 25 * 60;
+      return;
+    }
+    startTimerBtn.textContent = 'Stop Timer';
+    timerInterval = setInterval(() => {
+      if (timeLeft <= 0) {
+        clearInterval(timerInterval);
+        timerInterval = null;
+        timerDisplay.textContent = 'Time is up! Take a break.';
+        startTimerBtn.textContent = 'Start Timer';
+        timeLeft = 25 * 60;
+        return;
+      }
+      const mins = Math.floor(timeLeft / 60);
+      const secs = timeLeft % 60;
+      timerDisplay.textContent = `${mins.toString().padStart(2,'0')}:${secs.toString().padStart(2,'0')}`;
+      timeLeft--;
+    }, 1000);
+  });
+
+  // Quick Notes Save to localStorage
+  const saveNotesBtn = document.getElementById('save-notes');
+  const quickNotes = document.getElementById('quick-notes');
+
+  // Load saved notes
+  quickNotes.value = localStorage.getItem('genz_quick_notes') || '';
+
+  saveNotesBtn.addEventListener('click', () => {
+    localStorage.setItem('genz_quick_notes', quickNotes.value);
+    alert('Notes saved locally!');
+  });
+
+  // Voice command button (mock)
+  const voiceBtn = document.getElementById('voice-btn');
+  voiceBtn.addEventListener('click', () => {
+    alert('Voice command feature coming soon! Speak your study commands.');
+  });
+</script>
+
+</body>
+</html>

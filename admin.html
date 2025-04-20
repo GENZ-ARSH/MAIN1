@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>GEN-Z-LIBRARY Admin Panel</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
+</head>
+<body class="bg-gray-900 text-white min-h-screen flex flex-col items-center">
+
+  <header class="mt-8 mb-4">
+    <h1 class="text-3xl font-bold text-cyan-400">GEN-Z-LIBRARY Admin Panel</h1>
+  </header>
+
+  <!-- Login Section -->
+  <section id="login-section" class="w-full max-w-md bg-gray-800 p-6 rounded-lg shadow-lg flex flex-col gap-4">
+    <input id="admin-password" type="password" placeholder="Enter Admin Password" class="p-3 rounded bg-gray-700 text-white" autocomplete="off" />
+    <button id="login-btn" class="bg-pink-600 hover:bg-pink-700 p-3 rounded font-bold text-white">Login</button>
+    <p id="login-error" class="text-red-500 hidden">Incorrect password. Try again.</p>
+  </section>
+
+  <!-- Admin Dashboard -->
+  <section id="admin-dashboard" class="hidden w-full max-w-4xl bg-gray-800 p-6 rounded-lg shadow-lg mt-8 flex flex-col gap-6">
+
+    <div class="flex justify-between items-center">
+      <h2 class="text-2xl font-bold text-cyan-400">Manage Books</h2>
+      <button id="logout-btn" class="bg-pink-600 hover:bg-pink-700 px-4 py-2 rounded font-bold text-white">Logout</button>
+    </div>
+
+    <!-- Book Form -->
+    <form id="book-form" class="flex flex-col gap-4 bg-gray-700 p-4 rounded">
+      <input type="hidden" id="book-id" />
+      <input id="title" type="text" placeholder="Book Title" required class="p-2 rounded bg-gray-600 text-white" />
+      <input id="author" type="text" placeholder="Author" required class="p-2 rounded bg-gray-600 text-white" />
+      <input id="class" type="text" placeholder="Class (e.g., 9th, NDA)" required class="p-2 rounded bg-gray-600 text-white" />
+      <select id="format" required class="p-2 rounded bg-gray-600 text-white">
+        <option value="" disabled selected>Select Format</option>
+        <option value="PDF">PDF</option>
+        <option value="EPUB">EPUB</option>
+        <option value="MOBI">MOBI</option>
+        <option value="Video">Video</option>
+        <option value="Audio">Audio</option>
+      </select>
+      <input id="size" type="text" placeholder="File Size (e.g., 2.4MB)" required class="p-2 rounded bg-gray-600 text-white" />
+      <label class="text-sm text-gray-300">Cover Image:</label>
+      <input id="cover" type="file" accept="image/*" class="text-white" />
+      <label class="text-sm text-gray-300">Book File:</label>
+      <input id="file" type="file" class="text-white" />
+      <div class="flex gap-4">
+        <button type="submit" class="bg-cyan-600 hover:bg-cyan-700 text-black font-bold p-2 rounded flex-grow">Save Book</button>
+        <button id="delete-btn" type="button" class="bg-red-600 hover:bg-red-700 text-black font-bold p-2 rounded flex-grow hidden">Delete Book</button>
+      </div>
+      <p id="form-msg" class="text-green-400 mt-2"></p>
+    </form>
+
+    <!-- Books List -->
+    <div>
+      <h3 class="text-xl mb-2 font-bold text-cyan-300">Books List</h3>
+      <ul id="books-list" class="max-h-96 overflow-auto space-y-2"></ul>
+    </div>
+
+  </section>
+
+  <footer class="mt-8 text-gray-400">
+    <a href="index.html" class="hover:text-cyan-400">Home</a> |
+    <a href="team.html" class="hover:text-cyan-400">Team Page</a>
+  </footer>
+
+<script>
+  // Supabase config
+  const SUPABASE_URL = 'https://aqbfkyggwivuzvvqedvi.supabase.co';
+  const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFxYmZreWdnd2l2dXp2dnFlZHZpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDUwNDMwMzgsImV4cCI6MjA2MDYxOTAzOH0.Nd4iCgjfbEKTOjlx5xNT7Dh-eFSYd8NPe20KNraBdM0';
+  const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+  // Elements
+  const loginSection = document.getElementById('login-section');
+  const adminDashboard = document.getElementById('admin-dashboard');
+  const loginBtn = document.getElementById('login-btn');
+  const loginError = document.getElementById('login-error');
+  const logoutBtn = document.getElementById('logout-btn');
+  const bookForm = document.getElementById('book-form');
+  const booksList = document.getElementById('books-list');
+  const formMsg = document.getElementById('form-msg');
+  const deleteBtn = document.getElementById('delete-btn');
+
+  // Simple admin password (change as needed)
+  const ADMIN_PASSWORD = 'GENZCLANX';
+
+  let editingBookId = null;
+
+  // Login handler
+  loginBtn.addEventListener('click', () => {
+    const pw = document.getElementById('admin-password').value.trim();
+    if (pw === ADMIN_PASSWORD) {
+      loginSection.classList.add('hidden');
+      adminDashboard.classList.remove('hidden');
+      loadBooks();
+    } else {
+      loginError.classList.remove('hidden');
+    }
+  });
+
+  // Logout handler
+  logoutBtn.addEventListener('click', () => {
+    adminDashboard.classList.add('hidden');
+    loginSection.classList.remove('hidden');
+    bookForm.reset();
+    formMsg.textContent = '';
+    deleteBtn.classList.add('hidden');
+    editingBookId = null;
+  });
+
+  // Upload file helper
+  async function uploadFile(bucket, file) {
+    const filePath = `${Date.now()}_${file.name}`;
+    const { error } = await supabase.storage.from(bucket).upload(filePath, file);
+    if (error) throw error;
+    const { publicURL } = supabase.storage.from(bucket).getPublicUrl(filePath).data;
+    return publicURL;
+  }
+
+  // Load books
+  async function loadBooks() {
+    booksList.innerHTML = 'Loading...';
+    const { data, error } = await supabase.from('books').select('*').order('title');
+    if (error) {
+      booksList.innerHTML = 'Error loading books';
+      return;
+    }
+    booksList.innerHTML = '';
+    data.forEach(book => {
+      const li = document.createElement('li');
+      li.className = 'p-2 bg-gray-700 rounded cursor-pointer hover:bg-cyan-700';
+      li.textContent = `${book.title} by ${book.author} (${book.class})`;
+      li.addEventListener('click', () => populateForm(book));
+      booksList.appendChild(li);
+    });
+  }
+
+  // Populate form for editing
+  function populateForm(book) {
+    editingBookId = book.id;
+    bookForm.title.value = book.title;
+    bookForm.author.value = book.author;
+    bookForm.class.value = book.class;
+    bookForm.format.value = book.format;
+    bookForm.size.value = book.size;
+    formMsg.textContent = '';
+    deleteBtn.classList.remove('hidden');
+  }
+
+  // Clear form
+  function clearForm() {
+    editingBookId = null;
+    bookForm.reset();
+    formMsg.textContent = '';
+    deleteBtn.classList.add('hidden');
+  }
+
+  // Submit form handler (add or update)
+  bookForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    formMsg.textContent = 'Saving...';
+
+    try {
+      const title = bookForm.title.value.trim();
+      const author = bookForm.author.value.trim();
+      const bookClass = bookForm.class.value.trim();
+      const format = bookForm.format.value;
+      const size = bookForm.size.value.trim();
+
+      if (!title || !author || !bookClass || !format || !size) {
+        formMsg.textContent = 'Please fill all fields.';
+        return;
+      }
+
+      // Upload files if selected
+      let coverURL = null;
+      let fileURL = null;
+
+      if (bookForm.cover.files.length > 0) {
+        coverURL = await uploadFile('covers', bookForm.cover.files[0]);
+      }
+      if (bookForm.file.files.length > 0) {
+        fileURL = await uploadFile('books', bookForm.file.files[0]);
+      }
+
+      // Build book object
+      const bookData = { title, author, class: bookClass, format, size };
+      if (coverURL) bookData.cover_url = coverURL;
+      if (fileURL) bookData.file_url = fileURL;
+
+      if (editingBookId) {
+        // Update book
+        const { error } = await supabase.from('books').update(bookData).eq('id', editingBookId);
+        if (error) throw error;
+        formMsg.textContent = 'Book updated successfully!';
+      } else {
+        // Insert new book
+        const { error } = await supabase.from('books').insert([bookData]);
+        if (error) throw error;
+        formMsg.textContent = 'Book added successfully!';
+      }
+
+      clearForm();
+      loadBooks();
+    } catch (error) {
+      formMsg.textContent = 'Error: ' + error.message;
+    }
+  });
+
+  // Delete book handler
+  deleteBtn.addEventListener('click', async () => {
+    if (!editingBookId) return;
+    if (!confirm('Are you sure you want to delete this book?')) return;
+    try {
+      const { error } = await supabase.from('books').delete().eq('id', editingBookId);
+      if (error) throw error;
+      formMsg.textContent = 'Book deleted.';
+      clearForm();
+      loadBooks();
+    } catch (error) {
+      formMsg.textContent = 'Error deleting book: ' + error.message;
+    }
+  });
+</script>
+
+</body>
+</html>
