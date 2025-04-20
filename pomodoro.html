@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Pomodoro Timer - GEN-Z</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gradient-to-tr from-black via-gray-900 to-gray-800 text-white min-h-screen flex flex-col items-center justify-center px-4">
+
+  <div class="text-center bg-gray-900 p-8 rounded-2xl shadow-2xl w-full max-w-md">
+    <h1 class="text-4xl font-bold mb-6 text-red-400">🍅 GEN-Z Pomodoro</h1>
+    <div id="timer" class="text-6xl font-mono mb-6">25:00</div>
+
+    <div class="flex justify-center gap-4">
+      <button onclick="startTimer()" class="bg-green-500 px-4 py-2 rounded font-bold hover:bg-green-600">Start</button>
+      <button onclick="pauseTimer()" class="bg-yellow-400 px-4 py-2 rounded font-bold hover:bg-yellow-500">Pause</button>
+      <button onclick="resetTimer()" class="bg-red-500 px-4 py-2 rounded font-bold hover:bg-red-600">Reset</button>
+    </div>
+
+    <p class="mt-4 text-gray-300 text-sm">Use 25 min study → 5 min break cycles</p>
+  </div>
+
+  <audio id="alarmSound" src="https://assets.mixkit.co/sfx/preview/mixkit-classic-alarm-995.mp3"></audio>
+
+  <script>
+    let timer;
+    let isRunning = false;
+    let timeLeft = 25 * 60; // 25 minutes
+
+    function updateDisplay() {
+      const minutes = Math.floor(timeLeft / 60).toString().padStart(2, '0');
+      const seconds = (timeLeft % 60).toString().padStart(2, '0');
+      document.getElementById("timer").textContent = `${minutes}:${seconds}`;
+    }
+
+    function startTimer() {
+      if (isRunning) return;
+      isRunning = true;
+      timer = setInterval(() => {
+        if (timeLeft <= 0) {
+          clearInterval(timer);
+          document.getElementById("alarmSound").play();
+          alert("⏰ Time's up! Take a break.");
+          isRunning = false;
+          return;
+        }
+        timeLeft--;
+        updateDisplay();
+      }, 1000);
+    }
+
+    function pauseTimer() {
+      clearInterval(timer);
+      isRunning = false;
+    }
+
+    function resetTimer() {
+      clearInterval(timer);
+      isRunning = false;
+      timeLeft = 25 * 60;
+      updateDisplay();
+    }
+
+    updateDisplay();
+  </script>
+
+</body>
+</html>
