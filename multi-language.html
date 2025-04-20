@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Neon Glass Game Hub</title>
+<style>
+  /* Neon Glass Design */
+  @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap');
+
+  body {
+    margin: 0;
+    background: #0f0f1a;
+    font-family: 'Orbitron', sans-serif;
+    color: #0ff;
+    overflow-x: hidden;
+  }
+
+  h1, h2 {
+    text-align: center;
+    color: #0ff;
+    text-shadow:
+      0 0 5px #0ff,
+      0 0 10px #0ff,
+      0 0 20px #0ff,
+      0 0 40px #0ff;
+  }
+
+  nav {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    background: rgba(0, 255, 255, 0.1);
+    padding: 1rem 0;
+    box-shadow:
+      0 0 10px #0ff,
+      inset 0 0 20px #0ff;
+    backdrop-filter: blur(10px);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+
+  nav button {
+    background: transparent;
+    border: 2px solid #0ff;
+    border-radius: 10px;
+    padding: 0.5rem 1.5rem;
+    color: #0ff;
+    cursor: pointer;
+    font-weight: 700;
+    font-size: 1rem;
+    transition: background 0.3s, color 0.3s;
+    text-shadow: none;
+  }
+
+  nav button:hover, nav button.active {
+    background: #0ff;
+    color: #001;
+    box-shadow:
+      0 0 10px #0ff,
+      0 0 20px #0ff;
+  }
+
+  main {
+    max-width: 900px;
+    margin: 2rem auto;
+    padding: 1rem;
+    background: rgba(0, 255, 255, 0.1);
+    border-radius: 20px;
+    box-shadow:
+      0 0 20px #0ff,
+      inset 0 0 40px #0ff;
+    backdrop-filter: blur(15px);
+  }
+
+  section {
+    display: none;
+  }
+
+  section.active {
+    display: block;
+  }
+
+  /* Quiz Styles */
+  .quiz-question {
+    font-size: 1.2rem;
+    margin-bottom: 1rem;
+    text-shadow:
+      0 0 5px #0ff,
+      0 0 10px #0ff;
+  }
+
+  .quiz-options {
+    display: flex;
+    flex-direction: column;
+    gap: 0.7rem;
+  }
+
+  .quiz-options button {
+    background: transparent;
+    border: 2px solid #0ff;
+    border-radius: 10px;
+    padding: 0.5rem 1rem;
+    color: #0ff;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: 600;
+    transition: background 0.3s, color 0.3s;
+    text-align: left;
+  }
+
+  .quiz-options button:hover {
+    background: #0ff;
+    color: #001;
+    box-shadow:
+      0 0 10px #0ff;
+  }
+
+  .score {
+    margin-top: 1rem;
+    font-weight: 700;
+    font-size: 1.1rem;
+    text-align: center;
+  }
+
+  /* Simple Game Section Styles */
+  .game-container {
+    text-align: center;
+  }
+
+  .game-btn {
+    background: transparent;
+    border: 2px solid #0ff;
+    border-radius: 15px;
+    padding: 1rem 2rem;
+    margin: 1rem auto;
+    cursor: pointer;
+    color: #0ff;
+    font-weight: 700;
+    font-size: 1.2rem;
+    display: inline-block;
+    transition: background 0.3s, color 0.3s;
+  }
+
+  .game-btn:hover {
+    background: #0ff;
+    color: #001;
+    box-shadow: 0 0 15px #0ff;
+  }
+
+  /* Card styles for Higher or Lower */
+  .card {
+    margin: 1rem auto;
+    padding: 1rem 2rem;
+    border: 3px solid #0ff;
+    border-radius: 15px;
+    width: fit-content;
+    font-size: 1.5rem;
+    text-shadow:
+      0 0 5px #0ff,
+      0 0 10px #0ff;
+  }
+
+  .result {
+    margin-top: 1rem;
+    font-weight: 700;
+    font-size: 1.2rem;
+    color: #0ff;
+    text-shadow:
+      0 0 10px #0ff;
+  }
+
+</style>
+</head>
+<body>
+
+<h1>Neon Glass Game Hub</h1>
+
+<nav>
+  <button class="nav-btn active" data-target="quiz-section">Quiz</button>
+  <button class="nav-btn" data-target="higher-lower-section">Higher or Lower</button>
+  <button class="nav-btn" data-target="tic-tac-toe-section">Tic Tac Toe</button>
+  <button class="nav-btn" data-target="memory-game-section">Memory Game</button>
+</nav>
+
+<main>
+  <!-- Quiz Section -->
+  <section id="quiz-section" class="active">
+    <h2>Quiz Game</h2>
+    <div id="quiz-container">
+      <div class="quiz-question" id="quiz-question">Loading questions...</div>
+      <div class="quiz-options" id="quiz-options"></div>
+      <div class="score" id="quiz-score"></div>
+      <button id="next-question-btn" style="display:none; margin-top:1rem; padding:0.5rem 1rem; border-radius:10px; border:none; background:#0ff; color:#001; cursor:pointer;">Next Question</button>
+    </div>
+  </section>
+
+  <!-- Higher or Lower Section -->
+  <section id="higher-lower-section">
+    <h2>Higher or Lower Card Game</h2>
+    <div class="game-container">
+      <div class="card" id="current-card">Press Start to Begin</div>
+      <div>
+        <button class="game-btn" id="btn-higher" disabled>Higher</button>
+        <button class="game-btn" id="btn-lower" disabled>Lower</button>
+      </div>
+      <div class="result" id="hl-result"></div>
+      <div class="score" id="hl-score"></div>
+      <button class="game-btn" id="hl-start-btn">Start Game</button>
+    </div>
+  </section>
+
+  <!-- Tic Tac Toe Section -->
+  <section id="tic-tac-toe-section">
+    <h2>Tic Tac Toe</h2>
+    <div class="game-container">
+      <div id="tic-tac-toe-board" style="display:grid; grid-template-columns: repeat(3, 100px); gap:10px; justify-content:center; margin-top:1rem;">
+        <!-- 9 buttons for the board -->
+        <button class="tic-cell" style="font-size:2rem; border: 2px solid #0ff; border-radius: 15px; background: transparent; color: #0ff; cursor:pointer;">&nbsp;</button>
+        <button class="tic-cell" style="font-size:2rem; border: 2px solid #0ff; border-radius: 15px; background: transparent; color: #0ff; cursor:pointer;">&nbsp;</button>
+        <button class="tic-cell" style="font-size:2rem; border: 2px solid #0ff; border-radius: 15px; background: transparent; color: #0ff; cursor:pointer;">&nbsp;</button>
+        <button class="tic-cell" style="font-size:2rem; border: 2px solid #0ff; border-radius: 15px; background: transparent; color: #0ff; cursor:pointer;">&nbsp;</button>
+        <button class="tic-cell" style="font-size:2rem; border: 2px solid #0ff; border-radius: 15px; background: transparent; color: #0ff; cursor:pointer;">&nbsp;</button>
+        <button class="tic-cell" style="font-size:2rem; border: 2px solid #0ff; border-radius: 15px; background: transparent; color: #0ff; cursor:pointer;">&nbsp;</button>
+        <button class="tic-cell" style="font-size:2rem; border: 2px solid #0ff; border-radius: 15px; background: transparent; color: #0ff; cursor:pointer;">&nbsp;</button>
+        <button class="tic-cell" style="font-size:2rem; border: 2px solid #0ff; border-radius: 15px; background: transparent; color: #0ff; cursor:pointer;">&nbsp;</button>
+        <button class="tic-cell" style="font-size:2rem; border: 2px solid #0ff; border-radius: 15px; background: transparent; color: #0ff; cursor:pointer;">&nbsp;</button>
+      </div>
+      <div class="result" id="tic-result" style="margin-top:1rem;"></div>
+      <button class="game-btn" id="tic-reset-btn" style="margin-top:1rem;">Reset Game</button>
+    </div>
+  </section>
+
+  <!-- Memory Game Section -->
+  <section id="memory-game-section">
+    <h2>Memory Game</h2>
+    <div class="game-container" id="memory-game-container" style="display:grid; grid-template-columns: repeat(4, 90px); gap:15px; justify-content:center; margin-top:1rem;">
+      <!-- Cards will be generated here -->
+    </div>
+    <div class="result" id="memory-result" style="margin-top:1rem;"></div>
+    <button class="game-btn" id="memory-reset-btn" style="margin-top:1rem;">Reset Game</button>
+  </section>
+</main>
+
+<script>
+  // Navigation logic
+  const navButtons = document.querySelectorAll('.nav-btn');
+  const sections = document.querySelectorAll('main section');
+
+  navButtons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      navButtons.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      const target = btn.dataset.target;
+      sections.forEach(sec => {
+        sec.id === target ? sec.classList.add('active') : sec.classList.remove('active');
+      });
+    });
+  });
+
+  // ==========================
+  // Quiz Game Logic
+  // ==========================
+  // Generate 1000 dummy quiz questions
+  const totalQuizQuestions = 1000;
+  const quizQuestions = [];
+  for (let i = 1; i <= totalQuizQuestions; i++) {
+    quizQuestions.push({
+      question: `Question #${i}: What is ${i} + ${i}?`,
+      options: [
+        `${i * 2}`,
+        `${i * 2 + 1}`,
+        `${i * 2 - 1}`,
+        `${i * 3}`
+      ],
+      answer: `${i * 2}`
+    });
+  }
+
+  // Shuffle function
+  function shuffleArray(arr) {
+    let array = arr.slice();
+    for (let i = array.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [array[i], array[j]] = [array[j], array[i]];
+    }
+    return array;
+  }
+
+  // Show only 10 shuffled questions initially
+  const quizSubset = shuffleArray(quizQuestions).slice(0, 10);
+
+  let currentQuizIndex = 0;
+  let quizScore = 0;
+
+  const quizQuestionEl = document.getElementById('quiz-question');
+  const quizOptionsEl = document.getElementById('quiz-options');
+  const quizScoreEl = document.getElementById('quiz-score');
+  const nextQuestionBtn = document.getElementById('next-question-btn');
+
+  function loadQuizQuestion() {
+    const q = quizSubset[currentQuizIndex];
+    quizQuestionEl.textContent = q.question;
+    quizOptionsEl.innerHTML = '';
+    const shuffledOptions = shuffleArray(q.options);
+    shuffledOptions.forEach(option => {
+      const btn = document.createElement('button');
+      btn.textContent = option;
+      btn.addEventListener('click', () => {
+        if (option === q.answer) {
+          quizScore += 10;
+          alert('Correct!');
+        } else {
+          alert(`Wrong! Correct answer is ${q.answer}`);
+        }
+        quizScoreEl.textContent = `Score: ${quizScore}`;
+        nextQuestionBtn.style.display = 'inline-block';
+        quizOptionsEl.querySelectorAll('button').forEach(b => b.disabled = true);
+      });
+      quizOptionsEl.appendChild(btn);
+    });
+    quizScoreEl.textContent = `Score: ${quizScore}`;
+    nextQuestionBtn.style.display = 'none';
+  }
+
+  nextQuestionBtn.addEventListener('click', () => {
+    currentQuizIndex++;
+    if (currentQuizIndex < quizSubset.length) {
+      loadQuizQuestion();
+    } else {
+      quizQuestionEl.textContent = 'Quiz Completed! Your final score: ' + quizScore;
+      quizOptionsEl.innerHTML = '';
+      nextQuestionBtn.style.display = 'none';
+    }
+  });
+
+  loadQuizQuestion();
+
+  // ==========================
+  // Higher or Lower Game Logic
+  // ==========================
+  const SUITS = ['â™ ', 'â™¥', 'â™¦', 'â™£'];
+  const RANKS = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A'];
+
+  let deck = [];
+  let currentCard = null;
+  let hlScore = 50;
+
+  const currentCardEl = document.getElementById('current-card');
+  const btnHigher = document.getElementById('btn-higher');
+  const btnLower = document.getElementById('btn-lower');
+  const hlResultEl = document.getElementById('hl-result');
+  const hlScoreEl = document.getElementById('hl-score');
+  const hlStartBtn = document.getElementById('hl-start-btn');
+
+  function createDeck() {
+    const d = [];
+    for (const suit of SUITS) {
+      for (let i = 0; i < RANKS.length; i++) {
+        d.push({ rank: RANKS[i], suit: suit, value: i + 2 });
+      }
+    }
+    return d;
+  }
+
+  function shuffleDeck(d) {
+    let array = d.slice();
+    for (let i = array.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [array[i], array[j]] = [array[j], array[i]];
+    }
+    return array;
+  }
+
+  function startHLGame() {
+    deck = shuffleDeck(createDeck());
+    currentCard = deck.pop();
+    hlScore = 50;
+    updateHLUI();
+    hlResultEl.textContent = '';
+    btnHigher.disabled = false;
+    btnLower.disabled = false;
+    hlStartBtn.textContent = 'Restart Game';
+  }
+
+  function updateHLUI() {
+    currentCardEl.textContent = `${currentCard.rank} ${currentCard.suit}`;
+    hlScoreEl.textContent = `Score: ${hlScore}`;
+  }
+
+  function playHLGame(guessHigher) {
+    if (deck.length === 0) {
+      hlResultEl.textContent = 'No more cards! Game over.';
+      btnHigher.disabled = true;
+      btnLower.disabled = true;
+      return;
+    }
+    const nextCard = deck.pop();
+    currentCardEl.textContent = `Next card: ${nextCard.rank} ${nextCard.suit}`;
+    const correct = guessHigher ? nextCard.value > currentCard.value : nextCard.value < currentCard.value;
+    if (correct) {
+      hlScore += 20;
+      hlResultEl.textContent = 'Correct! +' + 20 + ' points.';
+    } else {
+      hlScore -= 15;
+      hlResultEl.textContent = 'Wrong! -' + 15 + ' points.';
+    }
+    currentCard = nextCard;
+    updateHLUI();
+    if (hlScore <= 0) {
+      hlResultEl.textContent += ' Game over! Your score dropped to zero.';
+      btnHigher.disabled = true;
+      btnLower.disabled = true;
+    }
+  }
+
+  hlStartBtn.addEventListener('click', startHLGame);
+  btnHigher.addEventListener('click', () => playHLGame(true));
+  btnLower.addEventListener('click', () => playHLGame(false));
+
+  // ==========================
+  // Tic Tac Toe Logic
+  // ==========================
+  const ticCells = document.querySelectorAll('.tic-cell');
+  const ticResultEl = document.getElementById('tic-result');
+  const ticResetBtn = document.getElementById('tic-reset-btn');
+
+  let ticTurn = 'X';
+  let ticBoard = Array(9).fill(null);
+  let ticGameOver = false;
+
+  function checkTicWin(board, player) {
+    const winPatterns = [
+      [0,1,2],[3,4,5],[6,7,8], // rows
+      [0,3,6],[1,4,7],[2,5,8], // cols
+      [0,4,8],[2,4,6]          // diagonals
+    ];
+    return winPatterns.some(pattern => pattern.every(i => board[i] === player));
+  }
+
+  function checkTicDraw(board) {
+    return board.every(cell => cell !== null);
+  }
+
+  function ticCellClick(e) {
+    const idx = Array.from(ticCells).indexOf(e.target);
+    if (ticBoard[idx] || ticGameOver) return;
+    ticBoard[idx] = ticTurn;
+    e.target.textContent = ticTurn;
+    if (checkTicWin(ticBoard, ticTurn)) {
+      ticResultEl.textContent = `Player ${ticTurn} wins!`;
+      ticGameOver = true;
+      return;
+    }
+    if (checkTicDraw(ticBoard)) {
+      ticResultEl.textContent = "It's a draw!";
+      ticGameOver = true;
+      return;
+    }
+    ticTurn = ticTurn === 'X' ? 'O' : 'X';
+    ticResultEl.textContent = `Player ${ticTurn}'s turn`;
+  }
+
+  ticCells.forEach(cell => cell.addEventListener('click', ticCellClick));
+
+  ticResetBtn.addEventListener('click', () => {
+    ticBoard.fill(null);
+    ticCells.forEach(c => c.textContent = '\u00A0');
+    ticTurn = 'X';
+    ticGameOver = false;
+    ticResultEl.textContent = `Player ${ticTurn}'s turn`;
+  });
+
+  ticResetBtn.click(); // Initialize
+
+  // ==========================
+  // Memory Game Logic
+  // ==========================
+  const memoryContainer = document.getElementById('memory-game-container');
+  const memoryResultEl = document.getElementById('memory-result');
+  const memoryResetBtn = document.getElementById('memory-reset-btn');
+
+  const memorySymbols = ['ðŸŽ','ðŸŒ','ðŸ‡','ðŸ‰','ðŸ“','ðŸ¥','ðŸ’','ðŸ'];
+  let memoryCards = [];
+  let memoryFlipped = [];
+  let memoryMatched = [];
+  let memoryLock = false;
+
+  function shuffleMemory(array) {
+    let arr = array.slice();
+    for (let i = arr.length -1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i+1));
+      [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr;
+  }
+
+  function createMemoryCards() {
+    const doubled = memorySymbols.concat(memorySymbols);
+    memoryCards = shuffleMemory(doubled);
+  }
+
+  function renderMemoryCards() {
+    memoryContainer.innerHTML = '';
+    memoryCards.forEach((symbol, index) => {
+      const card = document.createElement('button');
+      card.classList.add('memory-card');
+      card.style = `
+        font-size: 2rem;
+        border: 2px solid #0ff;
+        border-radius: 15px;
+        background: #001;
+        color: #001;
+        cursor: pointer;
+        user-select: none;
+        height: 90px;
+        width: 90px;
+      `;
+      card.dataset.index = index;
+      card.textContent = '';
+      card.addEventListener('click', memoryCardClick);
+      memoryContainer.appendChild(card);
+    });
+    memoryFlipped = [];
+    memoryMatched = [];
+    memoryLock = false;
+    memoryResultEl.textContent = '';
+  }
+
+  function memoryCardClick(e) {
+    if (memoryLock) return;
+    const card = e.target;
+    const idx = card.dataset.index;
+    if (memoryFlipped.includes(idx) || memoryMatched.includes(idx)) return;
+
+    flipCard(card, idx);
+
+    if (memoryFlipped.length === 2) {
+      memoryLock = true;
+      setTimeout(checkMemoryMatch, 1000);
+    }
+  }
+
+  function flipCard(card, idx) {
+    card.textContent = memoryCards[idx];
+    card.style.color = '#0ff';
+    memoryFlipped.push(idx);
+  }
+
+  function unflipCards() {
+    memoryFlipped.forEach(i => {
+      const card = memoryContainer.querySelector(`button[data-index="${i}"]`);
+      card.textContent = '';
+      card.style.color = '#001';
+    });
+    memoryFlipped = [];
+  }
+
+  function checkMemoryMatch() {
+    const [first, second] = memoryFlipped;
+    if (memoryCards[first] === memoryCards[second]) {
+      memoryMatched.push(first, second);
+      memoryResultEl.textContent = `Matched ${memoryCards[first]}!`;
+      if (memoryMatched.length === memoryCards.length) {
+        memoryResultEl.textContent = 'You matched all pairs! ðŸŽ‰';
+      }
+      memoryFlipped = [];
+      memoryLock = false;
+    } else {
+      unflipCards();
+      memoryLock = false;
+      memoryResultEl.textContent = 'Try again!';
+    }
+  }
+
+  memoryResetBtn.addEventListener('click', () => {
+    createMemoryCards();
+    renderMemoryCards();
+  });
+
+  // Initialize memory game on load
+  createMemoryCards();
+  renderMemoryCards();
+
+</script>
+
+</body>
+</html>
